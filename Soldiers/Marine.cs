@@ -1,41 +1,31 @@
+using System.Reflection.Metadata;
+
 namespace WarConflict.Soldiers;
 using static Console;
 using System.Threading;
-public class Marine : Soldier
+public class Marine : ISoldier
 {
-    public string Rank { get; protected set; } = "Пехотинец";
-    public int MaxHealth { get; protected set; } = 60;
-    public int CurrentHealth { get; protected set; }
-    public int Damage { get; protected set; } = 8;
-    public bool IsAlive { get; protected set; } = true;
+    public string FractionName { get; set; }
+    public string Rank { get; }
+    public  int MaxHealth { get; }
+    public int CurrentHealth { get;  set; }
+    public int Damage { get; } 
+    public bool IsAlive { get; set; } 
 
-    public Marine()
+    public Marine(MarineStats stats)
     {
+        Rank = stats.Rank;
+        MaxHealth = stats.MaxHealth;
         CurrentHealth = MaxHealth;
+        Damage = stats.Damage;
+        IsAlive = true;
+    }
+
+    public void Attack(ISoldier soldier)
+    {
+        int hpLeft = soldier.CurrentHealth -= Damage;
+        if (hpLeft < 0) soldier.CurrentHealth = 0;
+        else soldier.CurrentHealth -= Damage;
     }
     
-    public override void Attack(Soldier target)
-    {
-        target.TakeDamage(Damage);
-        WriteLine($"Солдат{Rank} нанёс {Damage} урона.");
-        Thread.Sleep(1000);
-    }
-
-    public override void TakeDamage(int damage)
-    {
-        CurrentHealth -= damage;
-        WriteLine($"Солдат {Rank} получил {Damage} урона.");
-        Thread.Sleep(1000);
-        CheckIfAlive();
-    }
-
-    private void CheckIfAlive()
-    {
-        if (CurrentHealth <= 0)
-        {
-            IsAlive = false;
-            WriteLine($"Солдат {Rank} погиб!");
-            Thread.Sleep(1000);
-        }
-    }
 }

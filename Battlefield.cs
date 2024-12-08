@@ -1,5 +1,6 @@
 using WarConflict.Soldiers;
 using static System.Console;
+using System.Threading;
 
 namespace WarConflict;
 
@@ -18,33 +19,54 @@ public class Battlefield
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            Soldier blueSoldier = _blueTeam.Squad[Helper.PickRandomSoldier(_blueTeam)];
-            Soldier redSoldier = _redTeam.Squad[Helper.PickRandomSoldier(_redTeam)];
+            ISoldier blueSoldier = _blueTeam.Squad[Helper.PickRandomSoldier(_blueTeam)];
+            ISoldier redSoldier = _redTeam.Squad[Helper.PickRandomSoldier(_redTeam)];
             blueSoldier.Attack(redSoldier);
-            redSoldier.TakeDamage(blueSoldier.Damage);
+            ShowMessage(redSoldier,blueSoldier);
+            CheckIfAlive(redSoldier);
+            _redTeam.CheckIfSoldierDead(redSoldier);
             redSoldier.Attack(blueSoldier);
-            blueSoldier.TakeDamage(redSoldier.Damage);
-            _blueTeam.CheckForDeadSoldiers();
-            _redTeam.CheckForDeadSoldiers();
+            ShowMessage(blueSoldier,redSoldier);
+            CheckIfAlive(blueSoldier);
+            _blueTeam.CheckIfSoldierDead(blueSoldier);
         }
 
         if (!_blueTeam.IsAlive && !_redTeam.IsAlive)
         {
-            Helper.ClearConsole();
-            Write("Ничья.");
+            //Helper.ClearConsole();
+            WriteLine("Ничья.");
+            Thread.Sleep(1000);
         }
 
         if ( _blueTeam.IsAlive && !_redTeam.IsAlive)
         {
-            Helper.ClearConsole();
+            //Helper.ClearConsole();
             WriteLine("Синяя команда победила!");
+            Thread.Sleep(1000);
         }
         
         if ( !_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            Helper.ClearConsole();
+            //Helper.ClearConsole();
             WriteLine("Красная команда победила!");
+            Thread.Sleep(1000);
         }
     }
 
+    private void ShowMessage(ISoldier target, ISoldier attacker)
+    {
+        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS {target.FractionName}'s {target.Rank}.");
+        WriteLine($"{target.FractionName}'s {target.Rank} GETS {attacker.Damage} damage. HP = {target.CurrentHealth}");
+        Thread.Sleep(1000);
+    }
+    
+    private void CheckIfAlive(ISoldier soldier)
+    {
+        if (soldier.CurrentHealth == 0)
+        {
+            soldier.IsAlive = false;
+            WriteLine($"{soldier.FractionName}'s {soldier.Rank} is DEAD!");
+        }
+       
+    }
 }

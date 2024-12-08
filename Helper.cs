@@ -1,3 +1,5 @@
+using WarConflict.Soldiers;
+
 namespace WarConflict;
 using static Console;
 public static class Helper
@@ -14,4 +16,6 @@ public static class Helper
     {
         return _randomizer.Next(0, team.Squad.Count);
     }
+
+    
 }

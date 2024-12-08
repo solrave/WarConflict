@@ -5,25 +5,32 @@ namespace WarConflict;
 
 public class Team
 {
-    public List<Soldier> Squad { get; set; }
-    private string Color { get; set; }
+    private readonly MarineStats _stats = new();
+    public List<ISoldier> Squad { get; set; }
+    private string Name { get; set; }
     public bool IsAlive { get; private set; }
-    public Team(string color)
+    public Team(string name)
     {
-        Squad = new List<Soldier>();
-        Color = color;
+        Squad = new List<ISoldier>();
+        Name = name;
         IsAlive = true;
+        SetSoldierQuantity();
     }
 
     public void SetSoldierQuantity()
     {
-        WriteLine($"Укажите кол-во бойцов в команде {Color}:");
+        WriteLine($"Укажите кол-во бойцов в команде {Name}:");
         bool isCorrect = int.TryParse(Console.ReadLine(), out int count);
         if (isCorrect && count > 0)
         {
             for (int i = 0; i < count; i++)
             {
-                Squad.Add(new Marine());
+                Squad.Add(new Marine(_stats.GetMarineStats()));
+            }
+
+            foreach (var soldier in Squad)
+            {
+                soldier.FractionName = Name;
             }
         }
         else WriteLine("Введено некорректное значение!");
@@ -35,16 +42,10 @@ public class Team
         CheckIfTeamAlive();
     }
     
-    public void CheckForDeadSoldiers()
+    public void CheckIfSoldierDead(ISoldier soldier)
     {
-        for (int i = 0; i < Squad.Count; i++)
-        {
-            if (!Squad[i].IsAlive)
-            {
-                Squad.RemoveAt(i);
-            }
-        }
-        CheckIfTeamAlive();
+        if (!soldier.IsAlive) Squad.Remove(soldier);
+            CheckIfTeamAlive();
     }
     
     private void CheckIfTeamAlive()

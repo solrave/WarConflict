@@ -2,9 +2,7 @@
 
 using WarConflict;
 
-Team blueTeam = new Team("Синяя");
-Team redTeam = new Team("Красная");
-blueTeam.SetSoldierQuantity();
-redTeam.SetSoldierQuantity();
+Team blueTeam = new Team("Blue");
+Team redTeam = new Team("Red");
 Battlefield battleGround = new Battlefield(blueTeam,redTeam);
 battleGround.StartFight();
