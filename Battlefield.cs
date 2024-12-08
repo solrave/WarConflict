@@ -19,8 +19,10 @@ public class Battlefield
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            ISoldier blueSoldier = _blueTeam.Squad[Helper.PickRandomSoldier(_blueTeam)];
-            ISoldier redSoldier = _redTeam.Squad[Helper.PickRandomSoldier(_redTeam)];
+            int blueIndex = Helper.PickRandomSoldier(_blueTeam);
+            int redIndex = Helper.PickRandomSoldier(_redTeam);
+            ISoldier blueSoldier = _blueTeam.Squad[blueIndex];
+            ISoldier redSoldier = _redTeam.Squad[redIndex];
             blueSoldier.Attack(redSoldier);
             ShowMessage(redSoldier,blueSoldier);
             CheckIfAlive(redSoldier);
@@ -33,30 +35,27 @@ public class Battlefield
 
         if (!_blueTeam.IsAlive && !_redTeam.IsAlive)
         {
-            //Helper.ClearConsole();
-            WriteLine("Ничья.");
-            Thread.Sleep(1000);
+            WriteLine("DRAW!Everybody is dead.");
+            Thread.Sleep(500);
         }
 
         if ( _blueTeam.IsAlive && !_redTeam.IsAlive)
         {
-            //Helper.ClearConsole();
-            WriteLine("Синяя команда победила!");
-            Thread.Sleep(1000);
+            WriteLine($"{_blueTeam.Name} team WINS!");
+            Thread.Sleep(500);
         }
         
         if ( !_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            //Helper.ClearConsole();
-            WriteLine("Красная команда победила!");
-            Thread.Sleep(1000);
+            WriteLine($"{_redTeam.Name} team WINS!");
+            Thread.Sleep(500);
         }
     }
 
     private void ShowMessage(ISoldier target, ISoldier attacker)
     {
-        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS {target.FractionName}'s {target.Rank}.");
-        WriteLine($"{target.FractionName}'s {target.Rank} GETS {attacker.Damage} damage. HP = {target.CurrentHealth}");
+        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS {target.FractionName}'s {target.Rank} with {attacker.Weapon.Name}.");
+        WriteLine($"{target.FractionName}'s {target.Rank} GETS {attacker.Weapon.Damage} damage. HP = {target.CurrentHealth}");
         Thread.Sleep(1000);
     }
     

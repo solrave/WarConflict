@@ -7,7 +7,7 @@ public class Team
 {
     private readonly MarineStats _stats = new();
     public List<ISoldier> Squad { get; set; }
-    private string Name { get; set; }
+    public string Name { get; }
     public bool IsAlive { get; private set; }
     public Team(string name)
     {
