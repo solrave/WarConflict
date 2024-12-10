@@ -5,6 +5,7 @@ namespace WarConflict;
 
 public class Team
 {
+    private static readonly Random Randomizer = new();
     private readonly MarineStats _stats = new();
     public List<ISoldier> Squad { get; set; }
     public string Name { get; }
@@ -19,7 +20,7 @@ public class Team
 
     public void SetSoldierQuantity()
     {
-        WriteLine($"Укажите кол-во бойцов в команде {Name}:");
+        WriteLine($"Input soldiers count in team {Name}:");
         bool isCorrect = int.TryParse(Console.ReadLine(), out int count);
         if (isCorrect && count > 0)
         {
@@ -33,23 +34,24 @@ public class Team
                 soldier.FractionName = Name;
             }
         }
-        else WriteLine("Введено некорректное значение!");
+        else WriteLine("Incorrect input!");
     }
-
-    public void KillSoldierByIndex(int index)
+    
+    public void RemoveDead(ISoldier soldier)
     {
-        Squad.RemoveAt(index);
+        Squad.Remove(soldier);
         CheckIfTeamAlive();
     }
     
-    public void CheckIfSoldierDead(ISoldier soldier)
+    public  ISoldier PickRandomSoldier()
     {
-        if (!soldier.IsAlive) Squad.Remove(soldier);
-            CheckIfTeamAlive();
+        return Squad[Randomizer.Next(Squad.Count)];
     }
     
     private void CheckIfTeamAlive()
     {
-        if (Squad.Count <= 0) IsAlive = false;
+        if (Squad.Count == 0) IsAlive = false;
     }
+    
+    
 }

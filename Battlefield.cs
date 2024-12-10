@@ -13,26 +13,22 @@ public class Battlefield
     {
         _blueTeam = blueTeam;
         _redTeam = redTeam;
+        SubscribeUnitsToEvents();
     }
 
     public void StartFight()
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            int blueIndex = Helper.PickRandomSoldier(_blueTeam);
-            int redIndex = Helper.PickRandomSoldier(_redTeam);
-            ISoldier blueSoldier = _blueTeam.Squad[blueIndex];
-            ISoldier redSoldier = _redTeam.Squad[redIndex];
-            blueSoldier.Attack(redSoldier);
-            ShowMessage(redSoldier,blueSoldier);
-            CheckIfAlive(redSoldier);
-            _redTeam.CheckIfSoldierDead(redSoldier);
-            redSoldier.Attack(blueSoldier);
-            ShowMessage(blueSoldier,redSoldier);
-            CheckIfAlive(blueSoldier);
-            _blueTeam.CheckIfSoldierDead(blueSoldier);
+            _blueTeam.PickRandomSoldier().Attack(_redTeam);
+            _redTeam.PickRandomSoldier().Attack(_blueTeam);
+            CheckResult();
         }
 
+    }
+
+    private void CheckResult()
+    {
         if (!_blueTeam.IsAlive && !_redTeam.IsAlive)
         {
             WriteLine("DRAW!Everybody is dead.");
@@ -52,20 +48,39 @@ public class Battlefield
         }
     }
 
-    private void ShowMessage(ISoldier target, ISoldier attacker)
+    private void SubscribeUnitsToEvents()
     {
-        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS {target.FractionName}'s {target.Rank} with {attacker.Weapon.Name}.");
-        WriteLine($"{target.FractionName}'s {target.Rank} GETS {attacker.Weapon.Damage} damage. HP = {target.CurrentHealth}");
-        Thread.Sleep(1000);
-    }
-    
-    private void CheckIfAlive(ISoldier soldier)
-    {
-        if (soldier.CurrentHealth == 0)
+        foreach (var unit in _blueTeam.Squad)
         {
-            soldier.IsAlive = false;
-            WriteLine($"{soldier.FractionName}'s {soldier.Rank} is DEAD!");
+            unit.Weapon.AttackInfo += AttackMessage;
+            unit.Weapon.DamageMessage += DamageMessage;
+            unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
         }
-       
+        
+        foreach (var unit in _redTeam.Squad)
+        {
+            unit.Weapon.AttackInfo += AttackMessage;
+            unit.Weapon.DamageMessage += DamageMessage;
+            unit.Weapon.RemoveDead += _redTeam.RemoveDead;
+        }
     }
+
+    private void AttackMessage(ISoldier attacker,ISoldier target)
+    {
+        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS" +
+                  $" {target.FractionName}'s {target.Rank} with {attacker.Weapon.Name}.");
+        if (attacker.Weapon.Damage > attacker.Weapon.WeaponDamage)
+        {
+            WriteLine($"{attacker.FractionName}'s {attacker.Rank} inflicts additional {attacker.Weapon.CritDamage} !");
+        }
+       // Thread.Sleep(1000);
+    }
+
+    private void DamageMessage(ISoldier target, int damage)
+    {
+        WriteLine(!target.IsAlive
+            ? $"{target.FractionName}'s {target.Rank} is DEAD!"
+            : $"{target.FractionName}'s {target.Rank} gets {damage} damage.");
+    }
+
 }

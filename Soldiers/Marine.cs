@@ -15,10 +15,26 @@ public class Marine : ISoldier
 
     public Marine(MarineStats stats)
     {
-        Weapon = new Rifle();
+        Weapon = stats.Weapon;
         Rank = stats.Rank;
         MaxHealth = stats.MaxHealth;
         CurrentHealth = MaxHealth;
         IsAlive = true;
+    }
+    
+    public void Attack(Team team)
+    {
+        Weapon.Shoot(this,team);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        int hpLeft = CurrentHealth - damage;
+        if (hpLeft <= 0) CurrentHealth = 0;
+        else CurrentHealth -= damage;
+        if (CurrentHealth == 0)
+        {
+            IsAlive = false;
+        }
     }
 }
