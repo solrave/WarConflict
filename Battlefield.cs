@@ -21,6 +21,7 @@ public class Battlefield
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
             _blueTeam.PickRandomSoldier().Attack(_redTeam);
+            CheckResult();
             _redTeam.PickRandomSoldier().Attack(_blueTeam);
             CheckResult();
         }
@@ -33,18 +34,21 @@ public class Battlefield
         {
             WriteLine("DRAW!Everybody is dead.");
             Thread.Sleep(500);
+            Environment.Exit(0);
         }
 
         if ( _blueTeam.IsAlive && !_redTeam.IsAlive)
         {
             WriteLine($"{_blueTeam.Name} team WINS!");
             Thread.Sleep(500);
+            Environment.Exit(0);
         }
         
         if ( !_blueTeam.IsAlive && _redTeam.IsAlive)
         {
             WriteLine($"{_redTeam.Name} team WINS!");
             Thread.Sleep(500);
+            Environment.Exit(0);
         }
     }
 
@@ -54,14 +58,14 @@ public class Battlefield
         {
             unit.Weapon.AttackInfo += AttackMessage;
             unit.Weapon.DamageMessage += DamageMessage;
-            unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
+            unit.Weapon.RemoveDead += _redTeam.RemoveDead;
         }
         
         foreach (var unit in _redTeam.Squad)
         {
             unit.Weapon.AttackInfo += AttackMessage;
             unit.Weapon.DamageMessage += DamageMessage;
-            unit.Weapon.RemoveDead += _redTeam.RemoveDead;
+            unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
         }
     }
 
@@ -73,7 +77,7 @@ public class Battlefield
         {
             WriteLine($"{attacker.FractionName}'s {attacker.Rank} inflicts additional {attacker.Weapon.CritDamage} !");
         }
-       // Thread.Sleep(1000);
+        //Thread.Sleep(500);
     }
 
     private void DamageMessage(ISoldier target, int damage)
@@ -81,6 +85,7 @@ public class Battlefield
         WriteLine(!target.IsAlive
             ? $"{target.FractionName}'s {target.Rank} is DEAD!"
             : $"{target.FractionName}'s {target.Rank} gets {damage} damage.");
+        //Thread.Sleep(500);
     }
 
 }

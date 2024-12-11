@@ -20,17 +20,24 @@ public class Rifle : IWeapon
     public void Shoot(ISoldier attacker, Team team)
     {
         var target = Helper.PickRandomSoldier(team);
-        AttackInfo?.Invoke(attacker,target);
-        if (ApplyCriticalDamage()) Damage = WeaponDamage + CritDamage;
-        else Damage = WeaponDamage;
-        ApplyDamageToTarget(target);
+        if (target.CurrentHealth != 0)
+        {
+            if (ApplyCriticalDamage()) Damage = WeaponDamage + CritDamage;
+            else Damage = WeaponDamage;
+            AttackInfo?.Invoke(attacker,target);
+            ApplyDamageToTarget(target);
+        }
+        else RemoveDead?.Invoke(target);
     }
 
     private void ApplyDamageToTarget(ISoldier target)
     {
         target.TakeDamage(Damage);
         DamageMessage?.Invoke(target, Damage);
-        RemoveDead?.Invoke(target);            
+        if (!target.IsAlive)
+        { 
+            RemoveDead?.Invoke(target);
+        }
     }
 
     private bool ApplyCriticalDamage()

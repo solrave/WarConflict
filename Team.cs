@@ -8,11 +8,13 @@ public class Team
     private static readonly Random Randomizer = new();
     private readonly MarineStats _stats = new();
     public List<ISoldier> Squad { get; set; }
+    public List<int> HCode { get; set; }
     public string Name { get; }
     public bool IsAlive { get; private set; }
     public Team(string name)
     {
         Squad = new List<ISoldier>();
+        HCode = new List<int>();
         Name = name;
         IsAlive = true;
         SetSoldierQuantity();
@@ -45,7 +47,7 @@ public class Team
     
     public  ISoldier PickRandomSoldier()
     {
-        return Squad[Randomizer.Next(Squad.Count)];
+        return Squad[Randomizer.Next(Squad.Count - 1)];
     }
     
     private void CheckIfTeamAlive()
