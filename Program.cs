@@ -3,7 +3,7 @@
 using WarConflict;
 using WarConflict.Soldiers;
 
-Team blueTeam = new Team("Blue");
-Team redTeam = new Team("Red");
+Team blueTeam = new Team();
+Team redTeam = new Team();
 Battlefield battleGround = new Battlefield(blueTeam,redTeam);
 battleGround.StartFight();

@@ -6,40 +6,67 @@ public class Shotgun : IWeapon
 {
     private Random _randomizer = new();
     
-    public event Action<ISoldier, ISoldier>? AttackInfo;
+    public event Action<MessageHandler>? AttackInfo;
     
     public event Action<ISoldier, int>? DamageMessage;
+    
     public event Action<ISoldier>? RemoveDead;
 
-    public event Action<ISoldier, ISoldier, int, int> SplashMessage;
-    
-    public string Name { get; } = "Shotgun";
-    
-    public int WeaponDamage { get; } = 2;
-    
-    public int Damage { get; }
+    private readonly string Name = "Shotgun";
+
+    private readonly int WeaponDamage = 2;
+
+    private List<int>? SplashDamage { get; set; }
 
     public void Shoot(ISoldier attacker, Team team)
     {
-        var targetIndex = Helper.PickSoldierByIndex(team);
-        var target = team.Squad[targetIndex];
-        ApplySplashDamage(team, targetIndex);
-        AttackInfo?.Invoke(attacker,target);
-        DamageMessage?.Invoke(target, Damage);
-        //SplashMessage?.Invoke();///////////////////////////////////////////////////////
+        var targetList = PickSoldiersToSplash(team);
+        CreateSplashDamage();
+        ApplySplashDamage(targetList);
+        AttackInfo?.Invoke(new MessageHandler(attacker, Name, targetList, SplashDamage));
     }
 
-    private void ApplyDamageToTarget(ISoldier target)
+    private void CreateSplashDamage()
     {
-        target.TakeDamage(Damage);
-        DamageMessage?.Invoke(target, Damage);
+        SplashDamage = new List<int>();
+        for (int i = 0; i < 3; i++)
+        {
+            SplashDamage.Add(_randomizer.Next(WeaponDamage));
+        }
+    }
+    
+    private void ApplySplashDamage(List<ISoldier> targetList)
+    {
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            targetList[i].TakeDamage(SplashDamage[i]);
+        }
+        
+        RemoveDeadTargets(targetList);
     }
 
-    private void ApplySplashDamage(Team team, int target)
+    private void RemoveDeadTargets(List<ISoldier> targetList)
     {
-        int splashDamage1 = _randomizer.Next(0, 2);
-        int splashDamage2 = _randomizer.Next(0, 2);
-        team.Squad[target - 1].CurrentHealth -= splashDamage1;
-        team.Squad[target + 1].CurrentHealth -= splashDamage2;
+        foreach (var target in targetList)
+        {
+            if (!target.IsAlive)
+            {
+                AttackInfo?.Invoke(new MessageHandler(target));
+                RemoveDead?.Invoke(target);
+            }
+        }
+    }
+    
+    private List<ISoldier> PickSoldiersToSplash(Team team)
+    {
+        int count = 3;
+        if (team.Squad.Count < count)
+        {
+            count = team.Squad.Count;
+        }
+        
+        int startIndex = _randomizer.Next(team.Squad.Count - count + 1);
+
+        return team.Squad.GetRange(startIndex, count);
     }
 }

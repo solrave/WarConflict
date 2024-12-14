@@ -5,35 +5,61 @@ namespace WarConflict;
 
 public class Team
 {
-    private static readonly Random Randomizer = new();
+    private readonly Random _randomizer = new();
     private readonly MarineStats _stats = new();
     public List<ISoldier> Squad { get; set; }
-    public List<int> HCode { get; set; }
-    public string Name { get; }
+    public string Name { get; private set; }
     public bool IsAlive { get; private set; }
-    public Team(string name)
+    public Team()
     {
         Squad = new List<ISoldier>();
-        HCode = new List<int>();
-        Name = name;
         IsAlive = true;
-        SetSoldierQuantity();
+        CreateSquad();
     }
 
-    public void SetSoldierQuantity()
+    private void CreateSquad()
     {
-        WriteLine($"Input soldiers count in team {Name}:");
-        bool isCorrect = int.TryParse(Console.ReadLine(), out int count);
-        if (isCorrect && count > 0)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                Squad.Add(new Marine(_stats.GetMarineStats()));
-            }
+        SetSquadName();
+        SetSoldiers();
+    }
 
-            foreach (var soldier in Squad)
+    private void SetSquadName()
+    {
+        WriteLine("Input fraction's name:");
+        string name = ReadLine();
+        if (string.IsNullOrEmpty(name))
+        {
+            Name = "Blue";
+        }
+        else Name = name;
+    }
+    
+    private void SetSoldiers()
+    {
+        WriteLine($"Input soldiers count armed with Rifle in {Name}'s fraction:");
+        bool inputOK = int.TryParse(Console.ReadLine(), out int rifleCount);
+        
+        if (inputOK && rifleCount > 0)
+        {
+            WriteLine($"Input soldiers count armed with Shotgun in {Name}'s fraction:");
+            bool inputOK2 = int.TryParse(Console.ReadLine(), out int shotgunCount);
+            
+            if (inputOK2 && shotgunCount > 0)
             {
-                soldier.FractionName = Name;
+                for (int i = 0; i < rifleCount; i++)
+                {
+                    Squad.Add(new Marine(_stats.GetRifleMarineStats()));
+                }
+
+                for (int i = 0; i < shotgunCount; i++)
+                {
+                    Squad.Add(new Marine(_stats.GetShotgunMarineStats()));
+                }
+                
+                foreach (var soldier in Squad)
+                {
+                    soldier.FractionName = Name;
+                }
             }
         }
         else WriteLine("Incorrect input!");
@@ -47,7 +73,7 @@ public class Team
     
     public  ISoldier PickRandomSoldier()
     {
-        return Squad[Randomizer.Next(Squad.Count - 1)];
+        return Squad[_randomizer.Next(Squad.Count - 1)];
     }
     
     private void CheckIfTeamAlive()

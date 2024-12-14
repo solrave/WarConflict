@@ -12,8 +12,6 @@ public interface ISoldier
     public string Rank { get; }
    
     public bool IsAlive { get; set; }
-    
-    public int CurrentHealth { get; set; }
 
     public void Attack(Team team);
 

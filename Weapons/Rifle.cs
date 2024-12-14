@@ -3,41 +3,47 @@ using Soldiers;
 
 public class Rifle : IWeapon
 {
-    private Random _randomizer = new();
     
-    public event Action<ISoldier,ISoldier>? AttackInfo;
+    public event Action<MessageHandler>? AttackInfo;
     public event Action<ISoldier, int>? DamageMessage;
     public event Action<ISoldier>? RemoveDead;
+    
+    private readonly Random _randomizer = new();
 
-    public string Name { get; } = "Rifle";
-    
-    public int WeaponDamage { get; } = 2;
-    
-    public int CritDamage { get; } = 1;
-    
-    public int Damage { get; private set; } = 0;
+    private bool _critApplied;
+
+    private readonly string Name = "Rifle";
+
+    private readonly int WeaponDamage = 2;
+
+    private readonly int CritDamage  = 2;
+
+    private int Damage { get; set; }
    
     public void Shoot(ISoldier attacker, Team team)
     {
-        var target = Helper.PickRandomSoldier(team);
-        if (target.CurrentHealth != 0)
-        {
-            if (ApplyCriticalDamage()) Damage = WeaponDamage + CritDamage;
-            else Damage = WeaponDamage;
-            AttackInfo?.Invoke(attacker,target);
-            ApplyDamageToTarget(target);
-        }
-        else RemoveDead?.Invoke(target);
+        _critApplied = false;
+        var target = team.PickRandomSoldier();
+        CreateDamage();
+        ApplyDamage(target);
+        AttackInfo?.Invoke(new MessageHandler(attacker, Name, target, Damage, _critApplied));
     }
 
-    private void ApplyDamageToTarget(ISoldier target)
+    private void CreateDamage()
+    {
+        if (ApplyCriticalDamage())
+        {
+            Damage = WeaponDamage + CritDamage;
+            _critApplied = true;
+        }
+        else Damage = WeaponDamage;
+        _critApplied = false;
+    }
+
+    private void ApplyDamage(ISoldier target)
     {
         target.TakeDamage(Damage);
-        DamageMessage?.Invoke(target, Damage);
-        if (!target.IsAlive)
-        { 
-            RemoveDead?.Invoke(target);
-        }
+        RemoveDeadTarget(target);
     }
 
     private bool ApplyCriticalDamage()
@@ -48,5 +54,13 @@ public class Rifle : IWeapon
             return true;
         }
         return false;
+    }
+
+    private void RemoveDeadTarget(ISoldier target)
+    {
+        if (!target.IsAlive)
+        { 
+            RemoveDead?.Invoke(target);
+        }  
     }
 }

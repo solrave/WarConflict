@@ -56,27 +56,22 @@ public class Battlefield
     {
         foreach (var unit in _blueTeam.Squad)
         {
-            unit.Weapon.AttackInfo += AttackMessage;
+            unit.Weapon.AttackInfo += ShowMessage;
             unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _redTeam.RemoveDead;
         }
         
         foreach (var unit in _redTeam.Squad)
         {
-            unit.Weapon.AttackInfo += AttackMessage;
+            unit.Weapon.AttackInfo += ShowMessage;
             unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
         }
     }
 
-    private void AttackMessage(ISoldier attacker,ISoldier target)
+    private void ShowMessage(MessageHandler eventMessage)
     {
-        WriteLine($"{attacker.FractionName}'s {attacker.Rank} ATTACKS" +
-                  $" {target.FractionName}'s {target.Rank} with {attacker.Weapon.Name}.");
-        if (attacker.Weapon.Damage > attacker.Weapon.WeaponDamage)
-        {
-            WriteLine($"{attacker.FractionName}'s {attacker.Rank} inflicts additional {attacker.Weapon.CritDamage} !");
-        }
+        WriteLine(eventMessage.Message);
         //Thread.Sleep(500);
     }
 

@@ -9,15 +9,19 @@ public class MarineStats
     
     public IWeapon Weapon { get; private set; }
 
-    public MarineStats()
+    public MarineStats GetRifleMarineStats()
     {
         Rank = "Marine";
         MaxHealth = 4;
         Weapon = new Rifle();
+        return this;
     }
-
-    public MarineStats GetMarineStats()
+    
+    public MarineStats GetShotgunMarineStats()
     {
-        return new MarineStats();
+        Rank = "Heavy Marine";
+        MaxHealth = 8;
+        Weapon = new Shotgun();
+        return this;
     }
 }
