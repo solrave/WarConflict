@@ -62,7 +62,7 @@ public class MessageHandler
     private void SetSplashDamageMessage()
     {
         _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} attacks" +
-                               $" with {WeaponName} and hits few targets!");
+                               $" with {WeaponName}.");
         for (int i = 0; i < Targets.Count; i++)
         {
             _messageBuilder.Append($"\n{Targets[i].FractionName}'s {Targets[i].Rank} " +

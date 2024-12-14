@@ -31,7 +31,7 @@ public class Shotgun : IWeapon
         SplashDamage = new List<int>();
         for (int i = 0; i < 3; i++)
         {
-            SplashDamage.Add(_randomizer.Next(WeaponDamage));
+            SplashDamage.Add((_randomizer.Next(WeaponDamage)) + 1);
         }
     }
     

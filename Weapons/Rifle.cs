@@ -22,7 +22,6 @@ public class Rifle : IWeapon
    
     public void Shoot(ISoldier attacker, Team team)
     {
-        _critApplied = false;
         var target = team.PickRandomSoldier();
         CreateDamage();
         ApplyDamage(target);
@@ -36,8 +35,11 @@ public class Rifle : IWeapon
             Damage = WeaponDamage + CritDamage;
             _critApplied = true;
         }
-        else Damage = WeaponDamage;
-        _critApplied = false;
+        else
+        {
+            Damage = WeaponDamage;
+            _critApplied = false;
+        }
     }
 
     private void ApplyDamage(ISoldier target)
