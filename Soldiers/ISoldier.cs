@@ -4,8 +4,11 @@ namespace WarConflict.Soldiers;
 using static System.Console;
 public interface ISoldier
 {
+    public event Action<MessageHandler> AttackInfo;
    
     public IWeapon Weapon { get; }
+
+    public int Number { get; set; }
     
     public string FractionName { get; set; }
     

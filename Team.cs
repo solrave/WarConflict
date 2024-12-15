@@ -7,7 +7,7 @@ public class Team
 {
     private readonly Random _randomizer = new();
     private readonly MarineStats _stats = new();
-    public List<ISoldier> Squad { get; set; }
+    public List<ISoldier> Squad { get; }
     public string Name { get; private set; }
     public bool IsAlive { get; private set; }
     public Team()
@@ -36,12 +36,12 @@ public class Team
     
     private void SetSoldiers()
     {
-        WriteLine($"Input soldiers count armed with Rifle in {Name}'s fraction:");
+        WriteLine($"Input Marine's count armed with Rifle in {Name}'s fraction:");
         bool inputOK = int.TryParse(Console.ReadLine(), out int rifleCount);
         
         if (inputOK && rifleCount > 0)
         {
-            WriteLine($"Input soldiers count armed with Shotgun in {Name}'s fraction:");
+            WriteLine($"Input HeavyMarine's count armed with Shotgun in {Name}'s fraction:");
             bool inputOK2 = int.TryParse(Console.ReadLine(), out int shotgunCount);
             
             if (inputOK2 && shotgunCount > 0)
@@ -53,12 +53,17 @@ public class Team
 
                 for (int i = 0; i < shotgunCount; i++)
                 {
-                    Squad.Add(new Marine(_stats.GetShotgunMarineStats()));
+                    Squad.Add(new HeavyMarine(_stats.GetHeavyMarineStats()));
                 }
                 
                 foreach (var soldier in Squad)
                 {
                     soldier.FractionName = Name;
+                }
+
+                for (int i = 0; i < Squad.Count; i++)
+                {
+                    Squad[i].Number = i;
                 }
             }
         }

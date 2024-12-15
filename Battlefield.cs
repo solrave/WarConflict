@@ -56,6 +56,7 @@ public class Battlefield
     {
         foreach (var unit in _blueTeam.Squad)
         {
+            unit.AttackInfo += ShowMessage;
             unit.Weapon.AttackInfo += ShowMessage;
             unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _redTeam.RemoveDead;
@@ -63,6 +64,7 @@ public class Battlefield
         
         foreach (var unit in _redTeam.Squad)
         {
+            unit.AttackInfo += ShowMessage;
             unit.Weapon.AttackInfo += ShowMessage;
             unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _blueTeam.RemoveDead;

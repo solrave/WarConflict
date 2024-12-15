@@ -8,6 +8,8 @@ public class MarineStats
     public  int MaxHealth { get; private set; }
     
     public IWeapon Weapon { get; private set; }
+    
+    
 
     public MarineStats GetRifleMarineStats()
     {
@@ -17,7 +19,7 @@ public class MarineStats
         return this;
     }
     
-    public MarineStats GetShotgunMarineStats()
+    public MarineStats GetHeavyMarineStats()
     {
         Rank = "Heavy Marine";
         MaxHealth = 8;

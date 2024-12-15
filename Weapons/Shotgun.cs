@@ -22,8 +22,9 @@ public class Shotgun : IWeapon
     {
         var targetList = PickSoldiersToSplash(team);
         CreateSplashDamage();
-        ApplySplashDamage(targetList);
         AttackInfo?.Invoke(new MessageHandler(attacker, Name, targetList, SplashDamage));
+        ApplySplashDamage(targetList);
+        RemoveDeadTargets(targetList);
     }
 
     private void CreateSplashDamage()
@@ -41,8 +42,6 @@ public class Shotgun : IWeapon
         {
             targetList[i].TakeDamage(SplashDamage[i]);
         }
-        
-        RemoveDeadTargets(targetList);
     }
 
     private void RemoveDeadTargets(List<ISoldier> targetList)

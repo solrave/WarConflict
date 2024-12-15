@@ -6,12 +6,28 @@ using static Console;
 using System.Threading;
 public class Marine : ISoldier
 {
+    private const int AbilityChance = 6;
+    
+    public event Action<MessageHandler>? AttackInfo;
+    
+    public int AdditionalDamage { get; private set; }
+    
+    private string _abilityName = "StimPack";
+    
     public IWeapon Weapon { get; }
+    
+    public int Number { get; set; }
+
     public string FractionName { get; set; }
+    
     public string Rank { get; }
+    
     public  int MaxHealth { get; }
-    public int CurrentHealth { get;  set; }
-    public bool IsAlive { get; set; } 
+    
+    public int CurrentHealth { get;  private set; }
+    
+    public bool IsAlive { get; set; }
+
 
     public Marine(MarineStats stats)
     {
@@ -24,7 +40,11 @@ public class Marine : ISoldier
     
     public void Attack(Team team)
     {
-        Weapon.Shoot(this,team);
+        UseAbility();
+        if (Weapon is Rifle rifle)
+        {
+            rifle.Shoot(this,team, AdditionalDamage);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -36,5 +56,32 @@ public class Marine : ISoldier
         {
             IsAlive = false;
         }
+        AttackInfo?.Invoke(new MessageHandler(this, damage));
     }
+
+    private void UseAbility()
+    {
+        if (TryUseAbility())
+        {
+            if (CurrentHealth > 4)
+            {
+                CurrentHealth -= 2;
+                AdditionalDamage = 2;
+                AttackInfo?.Invoke(new MessageHandler(this, _abilityName, AdditionalDamage));
+            }
+
+        }
+    }
+
+    private bool TryUseAbility()
+        { 
+            int abilityActual = Helper.GetRandomNumber();
+            if (AbilityChance > abilityActual)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 }
