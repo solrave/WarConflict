@@ -58,7 +58,6 @@ public class Battlefield
         {
             unit.AttackInfo += ShowMessage;
             unit.Weapon.AttackInfo += ShowMessage;
-            unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _redTeam.RemoveDead;
         }
         
@@ -66,7 +65,6 @@ public class Battlefield
         {
             unit.AttackInfo += ShowMessage;
             unit.Weapon.AttackInfo += ShowMessage;
-            unit.Weapon.DamageMessage += DamageMessage;
             unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
         }
     }
@@ -74,14 +72,6 @@ public class Battlefield
     private void ShowMessage(MessageHandler eventMessage)
     {
         WriteLine(eventMessage.Message);
-        //Thread.Sleep(500);
-    }
-
-    private void DamageMessage(ISoldier target, int damage)
-    {
-        WriteLine(!target.IsAlive
-            ? $"{target.FractionName}'s {target.Rank} is DEAD!"
-            : $"{target.FractionName}'s {target.Rank} gets {damage} damage.");
         //Thread.Sleep(500);
     }
 

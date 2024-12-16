@@ -8,8 +8,6 @@ public class Shotgun : IWeapon
     
     public event Action<MessageHandler>? AttackInfo;
     
-    public event Action<ISoldier, int>? DamageMessage;
-    
     public event Action<ISoldier>? RemoveDead;
 
     private readonly string Name = "Shotgun";

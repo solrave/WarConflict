@@ -56,6 +56,13 @@ public class MessageHandler
         SingleDamage = damage;
         SetUsingAbilityMessage();
     }
+    
+    public MessageHandler(ISoldier attacker, string abilityName)
+    {
+        Attacker = attacker;
+        AbilityName = abilityName;
+        SetUsingAbilityMessage();
+    }
 
     private void SetRifleDamageMessage()
     {

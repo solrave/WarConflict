@@ -5,7 +5,6 @@ public class Rifle : IWeapon
 {
     
     public event Action<MessageHandler>? AttackInfo;
-    public event Action<ISoldier, int>? DamageMessage;
     public event Action<ISoldier>? RemoveDead;
     
     private readonly Random _randomizer = new();
