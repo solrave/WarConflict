@@ -5,8 +5,6 @@ using static System.Console;
 public interface ISoldier
 {
     public event Action<MessageHandler> AttackInfo;
-   
-    public IWeapon Weapon { get; }
 
     public int Number { get; set; }
     
@@ -14,9 +12,9 @@ public interface ISoldier
     
     public string Rank { get; }
    
-    public bool IsAlive { get; set; }
+    public bool IsAlive { get; }
 
-    public void Attack(Team team);
+    public void FightAction(Team team, Team enemyTeam);
 
     public void TakeDamage(int damage);
 

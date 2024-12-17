@@ -2,7 +2,7 @@ using WarConflict.Weapons;
 
 namespace WarConflict.Soldiers;
 
-public class HeavyMarine : ISoldier
+public class HeavyMarine : ISoldier, IAttacker, IHealable
 {
     private const int AbilityChance = 4;
     
@@ -19,7 +19,7 @@ public class HeavyMarine : ISoldier
     public  int MaxHealth { get; }
     
     public int CurrentHealth { get;  set; }
-    
+
     public bool IsAlive { get; set; }
     
     public int Defence { get; private set; } = 1;
@@ -36,6 +36,21 @@ public class HeavyMarine : ISoldier
         IsAlive = true;
     }
     
+    public void TakeHeal(int healingValue)
+    {
+        int healResult = CurrentHealth + healingValue;
+        if (healResult > MaxHealth)
+        {
+            CurrentHealth += MaxHealth - CurrentHealth;
+        }
+        CurrentHealth += healingValue;
+    }
+    
+    public void FightAction(Team team, Team enemyTeam)
+    {
+        Attack(enemyTeam);
+    }
+
     public void Attack(Team team)
     {
         Weapon.Shoot(this,team);
@@ -71,7 +86,7 @@ public class HeavyMarine : ISoldier
 
     private bool TryToBlock()
     {
-        int abilityActual = Helper.GetRandomNumber();
+        int abilityActual = Helper.GetRandomNumber(12);
         if (AbilityChance > abilityActual)
         {
             return true;

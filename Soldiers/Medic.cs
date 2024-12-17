@@ -2,17 +2,16 @@ using WarConflict.Weapons;
 
 namespace WarConflict.Soldiers;
 
-public class Medic : ISoldier
+public class Medic : ISoldier, IHealer
 {
-    private const int AbilityChance = 6;
+    private const int AbilityChance = 9;
     
+    private const int HealingValue = 4;
     public event Action<MessageHandler>? AttackInfo;
     
     public int Armor { get; private set; }
     
-    private string _abilityName = "MedKit";
-    
-    public IWeapon Weapon { get; }
+    private readonly string _abilityName = "MedKit";
     
     public int Number { get; set; }
     
@@ -21,10 +20,17 @@ public class Medic : ISoldier
     public string Rank { get; }
     
     public bool IsAlive { get; set; }
-    
-    public void Attack(Team team)
+
+    public Medic(MarineStats stats)
     {
-        throw new NotImplementedException();
+        Rank = stats.Rank;
+        Armor = stats.Armor;
+        IsAlive = true;
+    }
+    
+    public void FightAction(Team team, Team enemyTeam)
+    {
+        Heal(team);
     }
 
     public void TakeDamage(int damage)
@@ -39,22 +45,19 @@ public class Medic : ISoldier
         AttackInfo?.Invoke(new MessageHandler(this, damage));
     }
     
-    private void UseAbility()
+    public void Heal(Team team)
     {
-        if (TryUseAbility())
+        var ally = team.PickRandomSoldier();
+        bool healableFound = false;
+        while (!healableFound)
         {
-            AttackInfo?.Invoke(new MessageHandler(this, _abilityName));
+            if (ally is IHealable healableAlly)
+            {
+                healableAlly.TakeHeal(1 + Helper.GetRandomNumber(HealingValue)); 
+                AttackInfo?.Invoke(new MessageHandler(this, ally, _abilityName, HealingValue));
+                healableFound = true;
+            }
         }
     }
 
-    private bool TryUseAbility()
-    { 
-        int abilityActual = Helper.GetRandomNumber();
-        if (AbilityChance > abilityActual)
-        {
-            return true;
-        }
-
-        return false;
-    }
 }

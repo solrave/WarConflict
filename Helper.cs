@@ -5,19 +5,9 @@ using static Console;
 
 public static class Helper
 {
-
     private static Random _randomizer = new();
-    public static int GetRandomNumber()
+    public static int GetRandomNumber(int value)
     {
-        int maxValue = 12;
-        int minValue = 0;
-        return _randomizer.Next(minValue, maxValue);
+        return _randomizer.Next(value);
     }
-    
-    public static void ClearConsole()
-    {
-        Clear();
-        WriteLine("\x1b[3J");
-    }
-    
 }

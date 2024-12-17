@@ -14,6 +14,8 @@ public class MessageHandler
     
     private string AbilityName { get; }
     private int SingleDamage { get; set; }
+    
+    private int HealingValue { get; set; }
     private List<int> Damage { get; set; }
     private bool CritApplied { get; set; }
 
@@ -57,10 +59,12 @@ public class MessageHandler
         SetUsingAbilityMessage();
     }
     
-    public MessageHandler(ISoldier attacker, string abilityName)
+    public MessageHandler(ISoldier attacker,ISoldier ally, string abilityName, int value)
     {
         Attacker = attacker;
+        SingleTarget = ally;
         AbilityName = abilityName;
+        HealingValue = value;
         SetUsingAbilityMessage();
     }
 
@@ -70,13 +74,13 @@ public class MessageHandler
         {
             _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] attacks" +
                                    $" {SingleTarget.FractionName}'s {SingleTarget.Rank} [{SingleTarget.Number}] " +
-                                   $"with {WeaponName} and deals CRITICAL {SingleDamage} damage!");
+                                   $"with {WeaponName} and deals CRITICAL {SingleDamage} damage! [^^]");
         }
         else
         {
             _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}]" +
                                    $" attacks {SingleTarget.FractionName}'s {SingleTarget.Rank}" +
-                                   $" [{SingleTarget.Number}] with {WeaponName} and deals {SingleDamage} damage.");
+                                   $" [{SingleTarget.Number}] with {WeaponName} and deals {SingleDamage} damage.[^]");
         }
         Message = _messageBuilder.ToString();
     }
@@ -85,29 +89,38 @@ public class MessageHandler
     {
         _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] " +
                                $"attacks" +
-                               $" with {WeaponName}.");
+                               $" with {WeaponName}. [->)]");
         Message = _messageBuilder.ToString();
     }
 
     private void SetDeadMessage()
     {
         _messageBuilder.Append($"{SingleTarget.FractionName}'s {SingleTarget.Rank} " +
-                               $"[{SingleTarget.Number}] dies.");
+                               $"[{SingleTarget.Number}] dies. [zZ]");
         Message = _messageBuilder.ToString();
     }
 
     private void SetUsingAbilityMessage()
     {
-        if (Attacker is Marine)
+        if (Attacker is IAttacker)
         {
-            _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] " +
-                                   $"uses {AbilityName} and increase own damage by {SingleDamage}!");
-            Message = _messageBuilder.ToString();
+            if (Attacker is Marine)
+            {
+                _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] " +
+                                       $"uses {AbilityName} and increase own damage by {SingleDamage}! [->]");
+                Message = _messageBuilder.ToString();
+            }
+            else if (Attacker is HeavyMarine)
+            {
+                _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] " +
+                                       $"uses {AbilityName} and gets {SingleDamage} defence! [D]");
+                Message = _messageBuilder.ToString();
+            }
         }
-        else if (Attacker is HeavyMarine)
+        else if (Attacker is IHealer)
         {
             _messageBuilder.Append($"{Attacker.FractionName}'s {Attacker.Rank} [{Attacker.Number}] " +
-                                   $"uses {AbilityName} and gets {SingleDamage} defence!");
+                                   $"uses {AbilityName} and heals {SingleTarget.FractionName}'s {SingleTarget.Rank} [{SingleTarget.Number}] for {HealingValue} points! [+]");
             Message = _messageBuilder.ToString();
         }
     }
@@ -115,7 +128,7 @@ public class MessageHandler
     private void SetDamageMessage()
     {
         _messageBuilder.Append($"{SingleTarget.FractionName}'s {SingleTarget.Rank} [{SingleTarget.Number}] " +
-                               $"gets {SingleDamage} damage.");
+                               $"gets {SingleDamage} damage. [*]");
         Message = _messageBuilder.ToString();
     }
 }

@@ -20,9 +20,9 @@ public class Battlefield
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            _blueTeam.PickRandomSoldier().Attack(_redTeam);
+            _blueTeam.PickRandomSoldier().FightAction(_blueTeam, _redTeam);
             CheckResult();
-            _redTeam.PickRandomSoldier().Attack(_blueTeam);
+           _redTeam.PickRandomSoldier().FightAction(_redTeam, _blueTeam);
             CheckResult();
         }
 
@@ -57,15 +57,21 @@ public class Battlefield
         foreach (var unit in _blueTeam.Squad)
         {
             unit.AttackInfo += ShowMessage;
-            unit.Weapon.AttackInfo += ShowMessage;
-            unit.Weapon.RemoveDead += _redTeam.RemoveDead;
+            if (unit is IAttacker attacker)
+            {
+                attacker.Weapon.AttackInfo += ShowMessage;
+                attacker.Weapon.RemoveDead += _redTeam.RemoveDead;
+            }
         }
         
         foreach (var unit in _redTeam.Squad)
         {
             unit.AttackInfo += ShowMessage;
-            unit.Weapon.AttackInfo += ShowMessage;
-            unit.Weapon.RemoveDead += _blueTeam.RemoveDead;
+            if (unit is IAttacker attacker)
+            {
+                attacker.Weapon.AttackInfo += ShowMessage;
+                attacker.Weapon.RemoveDead += _redTeam.RemoveDead;
+            }
         }
     }
 

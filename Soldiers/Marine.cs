@@ -4,7 +4,7 @@ using WarConflict.Weapons;
 namespace WarConflict.Soldiers;
 using static Console;
 using System.Threading;
-public class Marine : ISoldier
+public class Marine : ISoldier, IAttacker, IHealable
 {
     private const int AbilityChance = 6;
     
@@ -24,11 +24,10 @@ public class Marine : ISoldier
     
     public  int MaxHealth { get; }
     
-    public int CurrentHealth { get;  private set; }
-    
+    public int CurrentHealth { get;  set; }
+
     public bool IsAlive { get; set; }
-
-
+    
     public Marine(MarineStats stats)
     {
         Weapon = stats.Weapon;
@@ -38,12 +37,31 @@ public class Marine : ISoldier
         IsAlive = true;
     }
     
+    public void TakeHeal(int healingValue)
+    {
+        int healResult = CurrentHealth + healingValue;
+        if (healResult > MaxHealth)
+        {
+            CurrentHealth += MaxHealth - CurrentHealth;
+        }
+        CurrentHealth += healingValue;
+    }
+    
+    public void FightAction(Team team, Team enemyTeam)
+    {
+        Attack(enemyTeam);
+    }
+
     public void Attack(Team team)
     {
         UseAbility();
         if (Weapon is Rifle rifle)
         {
             rifle.Shoot(this,team, AdditionalDamage);
+        }
+        else
+        {
+            Weapon?.Shoot(this, team);
         }
     }
 
@@ -75,7 +93,7 @@ public class Marine : ISoldier
 
     private bool TryUseAbility()
         { 
-            int abilityActual = Helper.GetRandomNumber();
+            int abilityActual = Helper.GetRandomNumber(12);
             if (AbilityChance > abilityActual)
             {
                 return true;
