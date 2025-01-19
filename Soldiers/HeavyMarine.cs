@@ -56,7 +56,7 @@ public class HeavyMarine : ISoldier, IAttacker, IHealable
         Weapon.Shoot(this,team);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(Func<int> damage)
     {
         int actualDamage = (damage - Defence);
         if (TryToBlock())

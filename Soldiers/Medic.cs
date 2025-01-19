@@ -33,7 +33,7 @@ public class Medic : ISoldier, IHealer
         Heal(team);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(Func<int> damage)
     {
         int hpLeft = Armor - damage;
         if (hpLeft <= 0) Armor = 0;

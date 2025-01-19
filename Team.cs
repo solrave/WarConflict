@@ -8,8 +8,10 @@ public class Team
     private readonly Random _randomizer = new();
     
     private readonly MarineStats _stats = new();
-    
-    public List<ISoldier> Squad { get; }
+
+    private List<ISoldier> _squad;
+
+    public IReadOnlyList<ISoldier> Squad => _squad;
     
     public string Name { get; private set; }
     
@@ -17,7 +19,7 @@ public class Team
     
     public Team()
     {
-        Squad = new List<ISoldier>();
+        _squad = new List<ISoldier>();
         IsAlive = true;
         CreateSquad();
     }
@@ -48,14 +50,14 @@ public class Team
 
     private void SetNaumbersAndNames()
     {
-        foreach (var soldier in Squad)
+        foreach (var soldier in _squad)
         {
             soldier.FractionName = Name;
         }
 
-        for (int i = 0; i < Squad.Count; i++)
+        for (int i = 0; i < _squad.Count; i++)
         {
-            Squad[i].Number = i;
+            _squad[i].Number = i;
         }
     }
     
@@ -68,7 +70,7 @@ public class Team
         {
             for (int i = 0; i < count; i++)
             {
-                Squad.Add(new Medic(_stats.GetMedicStats()));
+                _squad.Add(new Medic(_stats.GetMedicStats()));
             }
         }
         else WriteLine("Incorrect input!");
@@ -84,7 +86,7 @@ public class Team
         {
             for (int i = 0; i < count; i++)
             {
-                Squad.Add(new HeavyMarine(_stats.GetHeavyMarineStats()));
+                _squad.Add(new HeavyMarine(_stats.GetHeavyMarineStats()));
             }
         }
         else WriteLine("Incorrect input!");
@@ -100,7 +102,7 @@ public class Team
         {
             for (int i = 0; i < count; i++)
             {
-                Squad.Add(new Marine(_stats.GetRifleMarineStats()));
+                _squad.Add(new Marine(_stats.GetRifleMarineStats()));
             }
         }
         else WriteLine("Incorrect input!");
@@ -109,18 +111,18 @@ public class Team
     
     public void RemoveDead(ISoldier soldier)
     {
-        Squad.Remove(soldier);
+        _squad.Remove(soldier);
         CheckIfTeamAlive();
     }
     
     public  ISoldier PickRandomSoldier()
     {
-        return Squad[_randomizer.Next(Squad.Count - 1)];
+        return _squad[_randomizer.Next(_squad.Count - 1)];
     }
     
     private void CheckIfTeamAlive()
     {
-        if (Squad.Count == 0) IsAlive = false;
+        if (_squad.Count == 0) IsAlive = false;
     }
     
     

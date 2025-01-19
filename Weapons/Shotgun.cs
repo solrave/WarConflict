@@ -25,20 +25,16 @@ public class Shotgun : IWeapon
         RemoveDeadTargets(targetList);
     }
 
-    private void CreateSplashDamage()
+    private int CreateSplashDamage()
     {
-        SplashDamage = new List<int>();
-        for (int i = 0; i < 3; i++)
-        {
-            SplashDamage.Add((_randomizer.Next(WeaponDamage)) + 1);
-        }
+        return _randomizer.Next((WeaponDamage) + 1);
     }
     
-    private void ApplySplashDamage(List<ISoldier> targetList)
+    private void ApplySplashDamage(IEnumerable<ISoldier> targetList)
     {
-        for (int i = 0; i < targetList.Count; i++)
+        foreach (var target in targetList)
         {
-            targetList[i].TakeDamage(SplashDamage[i]);
+            target.TakeDamage(CreateSplashDamage);
         }
     }
 
@@ -54,16 +50,26 @@ public class Shotgun : IWeapon
         }
     }
     
-    private List<ISoldier> PickSoldiersToSplash(Team team)
+    private IEnumerable<ISoldier> PickSoldiersToSplash(Team team)
     {
-        int count = 3;
-        if (team.Squad.Count < count)
+        int splashRange = 3;
+        int targetIndex = _randomizer.Next(team.Squad.Count - 1);
+        if (team.Squad.Count < splashRange)
         {
-            count = team.Squad.Count;
+            splashRange = team.Squad.Count;
+            return team.Squad.Take(splashRange);
         }
-        
-        int startIndex = _randomizer.Next(team.Squad.Count - count + 1);
-
-        return team.Squad.GetRange(startIndex, count);
+        else if (targetIndex == team.Squad.Count)
+        {
+            return team.Squad.Skip(targetIndex - 1).Take(splashRange - 1);
+        }
+        else if (targetIndex == 0)
+        {
+            return team.Squad.Take(splashRange - 1);
+        }
+        else
+        {
+            return team.Squad.Skip(targetIndex - 1).Take(splashRange);
+        }
     }
 }

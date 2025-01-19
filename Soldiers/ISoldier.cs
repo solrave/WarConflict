@@ -16,6 +16,6 @@ public interface ISoldier
 
     public void FightAction(Team team, Team enemyTeam);
 
-    public void TakeDamage(int damage);
+    public void TakeDamage(Func<int> damage);
 
 }

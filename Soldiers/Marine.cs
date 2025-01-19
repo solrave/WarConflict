@@ -65,7 +65,7 @@ public class Marine : ISoldier, IAttacker, IHealable
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(Func<int> damage)
     {
         int hpLeft = CurrentHealth - damage;
         if (hpLeft <= 0) CurrentHealth = 0;
