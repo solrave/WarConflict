@@ -1,6 +1,7 @@
 using WarConflict.Soldiers;
 using static System.Console;
 using System.Threading;
+using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict;
 
@@ -20,9 +21,9 @@ public class Battlefield
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            _blueTeam.PickRandomSoldier().FightAction(_blueTeam, _redTeam);
+            //_blueTeam.PickRandomSoldier().FightAction(_blueTeam, _redTeam);
             CheckResult();
-           _redTeam.PickRandomSoldier().FightAction(_redTeam, _blueTeam);
+           //_redTeam.PickRandomSoldier().FightAction(_redTeam, _blueTeam);
             CheckResult();
         }
 
@@ -56,28 +57,26 @@ public class Battlefield
     {
         foreach (var unit in _blueTeam.Squad)
         {
-            unit.AttackInfo += ShowMessage;
+            unit.OnAction += ShowMessage;
             if (unit is IAttacker attacker)
             {
-                attacker.Weapon.AttackInfo += ShowMessage;
-                attacker.Weapon.RemoveDead += _redTeam.RemoveDead;
+                attacker.Weapon.InflictDamage += unit.TakeDamage;
             }
         }
         
         foreach (var unit in _redTeam.Squad)
         {
-            unit.AttackInfo += ShowMessage;
+            unit.OnAction += ShowMessage;
             if (unit is IAttacker attacker)
             {
-                attacker.Weapon.AttackInfo += ShowMessage;
-                attacker.Weapon.RemoveDead += _redTeam.RemoveDead;
+                attacker.Weapon.InflictDamage += unit.TakeDamage;
             }
         }
     }
 
-    private void ShowMessage(MessageHandler eventMessage)
+    private void ShowMessage(EventArgs args)
     {
-        WriteLine(eventMessage.Message);
+        WriteLine();
         //Thread.Sleep(500);
     }
 

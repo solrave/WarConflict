@@ -1,4 +1,4 @@
-namespace WarConflict.Soldiers;
+namespace WarConflict.UNITS.Interfaces;
 
 public interface IHealer
 {

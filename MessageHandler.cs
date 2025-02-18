@@ -1,3 +1,5 @@
+using WarConflict.UNITS.Interfaces;
+
 namespace WarConflict;
 using Soldiers;
 using System.Text;
@@ -7,9 +9,9 @@ public class MessageHandler
     public string Message { get; private set; }
 
     private StringBuilder _messageBuilder = new StringBuilder();
-    private ISoldier Attacker { get; set; }
-    private ISoldier SingleTarget { get; set; }
-    private List<ISoldier> Targets { get; set; }
+    private Soldier Attacker { get; set; }
+    private Soldier SingleTarget { get; set; }
+    private List<Soldier> Targets { get; set; }
     private string WeaponName { get; set; }
     
     private string AbilityName { get; }
@@ -19,7 +21,7 @@ public class MessageHandler
     private List<int> Damage { get; set; }
     private bool CritApplied { get; set; }
 
-    public MessageHandler(ISoldier attacker,string weaponName, List<ISoldier> targets, List<int> damage)
+    public MessageHandler(Soldier attacker,string weaponName, List<Soldier> targets, List<int> damage)
     {
         Attacker = attacker;
         WeaponName = weaponName;
@@ -28,7 +30,7 @@ public class MessageHandler
         SetSplashDamageMessage();
     }
 
-    public MessageHandler(ISoldier attacker,string weaponName, ISoldier target, int damage, bool critDamage)
+    public MessageHandler(Soldier attacker,string weaponName, Soldier target, int damage, bool critDamage)
     {
         Attacker = attacker;
         WeaponName = weaponName;
@@ -38,20 +40,20 @@ public class MessageHandler
         SetRifleDamageMessage();
     }
 
-    public MessageHandler(ISoldier target)
+    public MessageHandler(Soldier target)
     {
         SingleTarget = target;
         SetDeadMessage();
     }
     
-    public MessageHandler(ISoldier target, int damage)
+    public MessageHandler(Soldier target, int damage)
     {
         SingleTarget = target;
         SingleDamage = damage;
         SetDamageMessage();
     }
 
-    public MessageHandler(ISoldier attacker, string abilityName, int damage)
+    public MessageHandler(Soldier attacker, string abilityName, int damage)
     {
         Attacker = attacker;
         AbilityName = abilityName;
@@ -59,7 +61,7 @@ public class MessageHandler
         SetUsingAbilityMessage();
     }
     
-    public MessageHandler(ISoldier attacker,ISoldier ally, string abilityName, int value)
+    public MessageHandler(Soldier attacker,Soldier ally, string abilityName, int value)
     {
         Attacker = attacker;
         SingleTarget = ally;

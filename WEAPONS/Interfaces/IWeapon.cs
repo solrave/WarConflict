@@ -1,11 +1,15 @@
-namespace WarConflict.Weapons;
-using Soldiers;
+using WarConflict.Soldiers;
+
+namespace WarConflict.WEAPONS.Interfaces;
+
 public interface IWeapon
 {
-    public event Action<MessageHandler> AttackInfo;
+    public string Name { get; set; }
     
-    public event Action<ISoldier>? RemoveDead;
+    public int Damage { get; set; }
+
+    public event Action<int> InflictDamage;
  
-    public void Shoot(ISoldier  attacker, Team team);
+    public void Shoot(Soldier target, Team team);
 
 }

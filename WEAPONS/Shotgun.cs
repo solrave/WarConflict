@@ -1,75 +1,26 @@
 using WarConflict.Soldiers;
+using WarConflict.WEAPONS.Interfaces;
 
 namespace WarConflict.Weapons;
 
 public class Shotgun : IWeapon
 {
-    private Random _randomizer = new();
+    public string Name { get; set; } = "Shotgun";
+
+    public int Damage { get; set; } = 3;
     
-    public event Action<MessageHandler>? AttackInfo;
-    
-    public event Action<ISoldier>? RemoveDead;
+    public event Action<int>? InflictDamage;
 
-    private readonly string Name = "Shotgun";
-
-    private readonly int WeaponDamage = 2;
-
-    private List<int>? SplashDamage { get; set; }
-
-    public void Shoot(ISoldier attacker, Team team)
+    public void Shoot(Soldier target, Team team)
     {
-        var targetList = PickSoldiersToSplash(team);
-        CreateSplashDamage();
-        AttackInfo?.Invoke(new MessageHandler(attacker, Name, targetList, SplashDamage));
-        ApplySplashDamage(targetList);
-        RemoveDeadTargets(targetList);
-    }
-
-    private int CreateSplashDamage()
-    {
-        return _randomizer.Next((WeaponDamage) + 1);
+        var targetList = PickTargetsToSplash(target, team);
     }
     
-    private void ApplySplashDamage(IEnumerable<ISoldier> targetList)
+    private IEnumerable<Soldier> PickTargetsToSplash(Soldier target, Team team)
     {
-        foreach (var target in targetList)
-        {
-            target.TakeDamage(CreateSplashDamage);
-        }
-    }
-
-    private void RemoveDeadTargets(List<ISoldier> targetList)
-    {
-        foreach (var target in targetList)
-        {
-            if (!target.IsAlive)
-            {
-                AttackInfo?.Invoke(new MessageHandler(target));
-                RemoveDead?.Invoke(target);
-            }
-        }
-    }
-    
-    private IEnumerable<ISoldier> PickSoldiersToSplash(Team team)
-    {
-        int splashRange = 3;
-        int targetIndex = _randomizer.Next(team.Squad.Count - 1);
-        if (team.Squad.Count < splashRange)
-        {
-            splashRange = team.Squad.Count;
-            return team.Squad.Take(splashRange);
-        }
-        else if (targetIndex == team.Squad.Count)
-        {
-            return team.Squad.Skip(targetIndex - 1).Take(splashRange - 1);
-        }
-        else if (targetIndex == 0)
-        {
-            return team.Squad.Take(splashRange - 1);
-        }
-        else
-        {
-            return team.Squad.Skip(targetIndex - 1).Take(splashRange);
-        }
+        int index = team.Squad.IndexOf(target);
+        if (index == -1) yield break;
+        if (index > 0) yield return team.Squad[index - 1];
+        if (index < team.Squad.Count - 1) yield return team.Squad[index + 1];
     }
 }

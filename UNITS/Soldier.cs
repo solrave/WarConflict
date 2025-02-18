@@ -1,21 +1,23 @@
-using WarConflict.Weapons;
-
 namespace WarConflict.Soldiers;
-using static System.Console;
+
 public abstract class Soldier
 {
-    public string FractionName { get; set; }
+    public string? FractionName { get; set; }
     
-    public string Rank { get; }
+    public string? Rank { get; set; }
     
     public int Number { get; set; }
     
-    public bool IsAlive { get; }
+    public bool IsAlive { get; set; }
     
-    public event Action<EventArgs> OnAction;
+    public abstract event Action<EventArgs> OnAction;
+    
+    //public abstract event Action<EventArgs> OnDamageReceiving;
+    
+    public abstract event Action<EventArgs> OnDead;
 
-    public abstract void Action();
+    public abstract void MakeAction();
 
-    public abstract void TakeDamage(Func<int> damage);
+    public abstract void TakeDamage(int damage);
 
 }
