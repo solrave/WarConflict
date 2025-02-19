@@ -18,7 +18,11 @@ public class Shotgun : IWeapon
     
     private IEnumerable<Soldier> PickTargetsToSplash(Soldier target, Team team)
     {
-        int index = team.Squad.IndexOf(target);
+        int index = team.Squad.Select((s, i) => new { s, i })
+            .Where(soldier => soldier.s.Equals(target))
+            .Select(soldier => soldier.i)
+            .FirstOrDefault(-1);
+        
         if (index == -1) yield break;
         if (index > 0) yield return team.Squad[index - 1];
         if (index < team.Squad.Count - 1) yield return team.Squad[index + 1];

@@ -7,7 +7,7 @@ public class Team
 {
     private readonly List<Soldier> _squad;
 
-    public List<Soldier> Squad => _squad;
+    public IReadOnlyList<Soldier> Squad => _squad;
     
     public string? Name { get; private set; }
     
