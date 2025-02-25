@@ -1,13 +1,13 @@
 using WarConflict.Weapons;
-using WarConflict.WEAPONS.Interfaces;
+using WarConflict.WEAPONS;
 
 namespace WarConflict.UNITS.Interfaces;
 
 public interface IAttacker
 {
-    public IWeapon Weapon { get; }
+    public Weapon Weapon { get; }
     
-    public event Action<EventArgs>? OnAttack;
+    public event Action<IHittable, IHittable>? OnAttack;
     
     public void Attack(Team team);
     

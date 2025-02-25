@@ -1,35 +1,69 @@
 using WarConflict.UNITS.Interfaces;
-using WarConflict.Weapons;
 
-namespace WarConflict.Soldiers;
+namespace WarConflict.UNITS;
 
-public class Medic : Soldier, IHealer
+public class Medic : Soldier,IHealable, IHealer
 {
-    public int Armor { get; private set; }
+    private readonly int _armor;
+    public int MaxHealth { get; }
     
-    public override event Action<EventArgs> OnAction;
+    public int CurrentHealth { get; set; }
+
+    public int HealingValue { get; set; }
+
+    public override event Action<int>? OnHit;
     
-    public override event Action<EventArgs> OnDead;
+    public override event Action<Soldier>? OnAction;
+    
+    public override event Action<Soldier>? OnDead;
+    
+    public event Action<int>? OnHeal;
     
     public Medic()
     {
         Rank = "Medic";
-        Armor = 5;
+        MaxHealth = 20;
+        CurrentHealth = MaxHealth;
+        HealingValue = 10;
+        _armor = 5;
         IsAlive = true;
     }
 
-    public override void MakeAction()
+    public override void MakeAction(Team team)
     {
-        throw new NotImplementedException();
+        Heal(team);
     }
 
-    public override void TakeDamage(int damage)
+    public override void TakeHit(int damage)
     {
-        throw new NotImplementedException();
+        CurrentHealth = Math.Max(CurrentHealth - (damage - _armor), 0);
+        if (CurrentHealth == 0)
+        {
+            IsAlive = false;
+            OnDead?.Invoke(this);
+        }
+        OnHit?.Invoke(damage); 
+    }
+    
+    public void TakeHeal(int healingValue)
+    {
+        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
+        OnHeal?.Invoke(healingValue);
     }
 
     public void Heal(Team team)
     {
-        throw new NotImplementedException();
+        var soldierToHeal = GetHealableSoldier(team);
+        if (soldierToHeal != null) soldierToHeal.TakeHeal(HealingValue);
+        
     }
+
+    private IHealable? GetHealableSoldier(Team team)
+    {
+        var healableCount = team.Squad.Count(s => s is IHealable);
+        return healableCount > 0
+            ? team.Squad.OfType<IHealable>().ElementAt(Helper.GetRandom().Next(healableCount))
+            : null;
+    }
+    
 }

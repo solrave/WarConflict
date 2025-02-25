@@ -1,18 +1,23 @@
-using WarConflict.Soldiers;
-using WarConflict.WEAPONS.Interfaces;
+using WarConflict.UNITS;
+using WarConflict.UNITS.Interfaces;
+using WarConflict.WEAPONS;
 
 namespace WarConflict.Weapons;
 
-public class Rifle : IWeapon
+public class Rifle : Weapon
 {
-    public string Name { get; set; } = "Rifle";
+    public override event Action<int>? InflictDamage;
+    
+    public Rifle()
+    {
+        Name = "Rifle";
+        Damage = 5;
+    }
 
-    public int Damage { get; set; } = 5;
-    public event Action<int>? InflictDamage;
-
-    public void Shoot(Soldier target, Team team)
+    public override void Shoot(IHittable target, Team team)
     {
        InflictDamage?.Invoke(Damage);
+       target.TakeHit(Damage);
     }
    
 }

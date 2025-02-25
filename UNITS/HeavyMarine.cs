@@ -1,23 +1,27 @@
 using WarConflict.UNITS.Interfaces;
 using WarConflict.Weapons;
-using WarConflict.WEAPONS.Interfaces;
+using WarConflict.WEAPONS;
 
-namespace WarConflict.Soldiers;
+namespace WarConflict.UNITS;
 
-public class HeavyMarine : Soldier, IAttacker, IHealable
+public class HeavyMarine : Soldier, IHealable
 {
-    public IWeapon Weapon { get; }
+    private readonly int _armor;
+    public Weapon Weapon { get; }
     
-    public event Action<EventArgs>? OnAttack;
-    
-
     public  int MaxHealth { get; }
     
     public int CurrentHealth { get;  set; }
     
-    public override event Action<EventArgs> OnAction;
+    public override event Action<int>? OnHit;
     
-    public override event Action<EventArgs> OnDead;
+    public override event Action<Soldier>? OnAction;
+    
+    public override event Action<Soldier>? OnDead;
+    
+    public event Action<IHittable, IHittable>? OnAttack;
+    
+    public event Action<int>? OnHeal;
 
     public HeavyMarine()
     {
@@ -25,26 +29,38 @@ public class HeavyMarine : Soldier, IAttacker, IHealable
         Rank = "Heavy Marine";
         MaxHealth = 100;
         CurrentHealth = MaxHealth;
+        _armor = 50;
         IsAlive = true;
     }
 
-    public override void MakeAction()
+    public override void MakeAction(Team team)
     {
         throw new NotImplementedException();
     }
 
-    public override void TakeDamage(int damage)
+    public override void TakeHit(int damage)
     {
-        throw new NotImplementedException();
+        CurrentHealth = Math.Max(CurrentHealth - (damage - _armor), 0);
+        if (CurrentHealth == 0)
+        {
+            IsAlive = false;
+            OnDead?.Invoke(this);
+        }
+        OnHit?.Invoke(damage); 
     }
     
     public void Attack(Team team)
     {
-        throw new NotImplementedException();
+        var target = Helper.GetRandomTarget(team);
+        OnAttack?.Invoke(this, target); 
+        Weapon.Shoot(target, team);
     }
     
     public void TakeHeal(int healingValue)
     {
-        throw new NotImplementedException();
+        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
+        OnHeal?.Invoke(healingValue);
     }
+
+    
 }

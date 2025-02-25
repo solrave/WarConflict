@@ -1,4 +1,4 @@
-using WarConflict.Soldiers;
+using WarConflict.UNITS;
 using static System.Console;
 
 namespace WarConflict;
@@ -9,7 +9,7 @@ public class Team
 
     public IReadOnlyList<Soldier> Squad => _squad;
     
-    public string? Name { get; private set; }
+    public string? TeamName { get; private set; }
     
     public bool IsAlive { get; private set; }
     
@@ -24,7 +24,7 @@ public class Team
     {
         WriteLine("Input team name:");
         string? name = ReadLine();
-        Name = string.IsNullOrEmpty(name) ? "Blue" : name;
+        TeamName = string.IsNullOrEmpty(name) ? "Team" : name;
     }
     
     private void CreateTeam()
@@ -38,11 +38,6 @@ public class Team
 
     private void SetNumbersAndNames()
     {
-        foreach (var soldier in _squad)
-        {
-            soldier.FractionName = Name;
-        }
-
         for (int i = 0; i < _squad.Count; i++)
         {
             _squad[i].Number = i;
@@ -51,7 +46,7 @@ public class Team
     
     private void SetUnitCount(Func<Soldier> unit, string unitRank)
     {
-        WriteLine($"Input {unitRank}'s count in {Name}'s team:");
+        WriteLine($"Input {unitRank}'s count in {TeamName}'s team:");
         
         bool input = int.TryParse(Console.ReadLine(), out int count);
         

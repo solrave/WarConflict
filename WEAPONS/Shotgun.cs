@@ -1,26 +1,37 @@
-using WarConflict.Soldiers;
-using WarConflict.WEAPONS.Interfaces;
+using WarConflict.UNITS;
+using WarConflict.UNITS.Interfaces;
+using WarConflict.WEAPONS;
 
 namespace WarConflict.Weapons;
 
-public class Shotgun : IWeapon
+public class Shotgun : Weapon
 {
-    public string Name { get; set; } = "Shotgun";
-
-    public int Damage { get; set; } = 3;
+    public int SplashDamage { get; set; } = 1;
     
-    public event Action<int>? InflictDamage;
+    public override event Action<int>? InflictDamage;
 
-    public void Shoot(Soldier target, Team team)
+    public Shotgun()
     {
+        Name = "Shotgun";
+        Damage = 3;
+    }
+
+    public override void Shoot(IHittable target, Team team)
+    {
+        InflictDamage?.Invoke(Damage);
         var targetList = PickTargetsToSplash(target, team);
+        target.TakeHit(Damage);
+        foreach (var indirectTarget in targetList)
+        {
+            indirectTarget.TakeHit(SplashDamage);
+        }
     }
     
-    private IEnumerable<Soldier> PickTargetsToSplash(Soldier target, Team team)
+    private IEnumerable<IHittable> PickTargetsToSplash(IHittable target, Team team)
     {
-        int index = team.Squad.Select((s, i) => new { s, i })
-            .Where(soldier => soldier.s.Equals(target))
-            .Select(soldier => soldier.i)
+        int index = team.Squad.Select((unit, index) => new { unit, index })
+            .Where(soldier => soldier.unit.Equals(target))
+            .Select(soldier => soldier.index)
             .FirstOrDefault(-1);
         
         if (index == -1) yield break;

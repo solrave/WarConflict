@@ -1,4 +1,5 @@
-using WarConflict.Soldiers;
+using WarConflict.UNITS;
+using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict;
 using static Console;
@@ -14,5 +15,10 @@ public static class Helper
     public static Soldier GetRandomTarget(Team team)
     {
         return team.Squad[Randomizer.Next(team.Squad.Count - 1)];
+    }
+
+    public static Random GetRandom()
+    {
+        return Randomizer;
     }
 }

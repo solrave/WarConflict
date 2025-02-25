@@ -1,20 +1,19 @@
-using WarConflict.Soldiers;
 using static System.Console;
 using System.Threading;
 using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict;
 
-public class Battlefield
+public class BattleField
 {
-    private Team _blueTeam;
-    private Team _redTeam;
+    private readonly Team _blueTeam;
+    private readonly Team _redTeam;
 
-    public Battlefield(Team blueTeam, Team redTeam)
+    public BattleField(Team blueTeam, Team redTeam)
     {
         _blueTeam = blueTeam;
         _redTeam = redTeam;
-        SubscribeUnitsToEvents();
+        //SubscribeUnitsToEvents();
     }
 
     public void StartFight()
@@ -40,27 +39,30 @@ public class Battlefield
 
         if ( _blueTeam.IsAlive && !_redTeam.IsAlive)
         {
-            WriteLine($"{_blueTeam.Name} team WINS!");
+            WriteLine($"{_blueTeam.TeamName} team WINS!");
             Thread.Sleep(500);
             Environment.Exit(0);
         }
         
         if ( !_blueTeam.IsAlive && _redTeam.IsAlive)
         {
-            WriteLine($"{_redTeam.Name} team WINS!");
+            WriteLine($"{_redTeam.TeamName} team WINS!");
             Thread.Sleep(500);
             Environment.Exit(0);
         }
     }
 
-    private void SubscribeUnitsToEvents()
+    private void SubscribeUnitsToEvents(Team team, Team enemyTeam)
     {
-        foreach (var unit in _blueTeam.Squad)
+        foreach (var unit in team.Squad)
         {
             unit.OnAction += ShowMessage;
-            if (unit is IAttacker attacker)
+            foreach (var redUnit in _redTeam.Squad)
             {
-                attacker.Weapon.InflictDamage += unit.TakeDamage;
+                if (redUnit is IAttacker attacker)
+                {
+                    attacker.Weapon.InflictDamage += unit.TakeHit;
+                }
             }
         }
         
@@ -69,7 +71,7 @@ public class Battlefield
             unit.OnAction += ShowMessage;
             if (unit is IAttacker attacker)
             {
-                attacker.Weapon.InflictDamage += unit.TakeDamage;
+                attacker.Weapon.InflictDamage += unit.TakeHit;
             }
         }
     }

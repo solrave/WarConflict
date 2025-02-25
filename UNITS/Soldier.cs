@@ -1,23 +1,25 @@
-namespace WarConflict.Soldiers;
+using WarConflict.UNITS.Interfaces;
 
-public abstract class Soldier
+namespace WarConflict.UNITS;
+
+public abstract class Soldier : IHittable, IMakeAction
 {
-    public string? FractionName { get; set; }
+    public string? FractionName { get; init; }
     
-    public string? Rank { get; set; }
+    public string? Rank { get; protected init; }
     
     public int Number { get; set; }
     
-    public bool IsAlive { get; set; }
+    public bool IsAlive { get; protected set; }
     
-    public abstract event Action<EventArgs> OnAction;
+    public abstract event Action<int>? OnHit;
     
-    //public abstract event Action<EventArgs> OnDamageReceiving;
+    public abstract event Action<Soldier>? OnAction;
     
-    public abstract event Action<EventArgs> OnDead;
+    public abstract event Action<Soldier>? OnDead;
 
-    public abstract void MakeAction();
+    public abstract void MakeAction(Team team);
 
-    public abstract void TakeDamage(int damage);
+    public abstract void TakeHit(int damage);
 
 }

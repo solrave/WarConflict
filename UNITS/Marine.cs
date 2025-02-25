@@ -1,24 +1,27 @@
 using WarConflict.UNITS.Interfaces;
 using WarConflict.Weapons;
-using WarConflict.WEAPONS.Interfaces;
+using WarConflict.WEAPONS;
 
-namespace WarConflict.Soldiers;
-using static Console;
-using System.Threading;
-public class Marine : Soldier, IAttacker, IHealable
+namespace WarConflict.UNITS;
+
+public class Marine : Soldier, IHealable
 {
-    public IWeapon Weapon { get; }
+    public Weapon Weapon { get; }
 
-    public  int MaxHealth { get; }
+    public int MaxHealth { get; }
+
+    public int CurrentHealth { get; set; }
+
+    public override event Action<int> OnHit; 
+
+    public override event Action<Soldier>? OnAction;
+
+    public override event Action<Soldier>? OnDead;
+
+    public event Action<IHittable, IHittable>? OnAttack;
     
-    public int CurrentHealth { get;  set; }
-    
-    public override event Action<EventArgs> OnAction;
-    
-    public override event Action<EventArgs> OnDead;
-    
-    public event Action<EventArgs>? OnAttack;
-    
+    public event Action<int>? OnHeal;
+
     public Marine()
     {
         Weapon = new Rifle();
@@ -27,33 +30,34 @@ public class Marine : Soldier, IAttacker, IHealable
         CurrentHealth = MaxHealth;
         IsAlive = true;
     }
-    public override void MakeAction()
+    
+    public override void MakeAction(Team team)
     {
-        throw new NotImplementedException();
-        //OnAction?.Invoke(); 
+        Attack(team);
+        OnAction?.Invoke(this);
     }
 
-    public override void TakeDamage(int damage)
+    public override void TakeHit(int damage)
     {
         CurrentHealth = Math.Max(CurrentHealth - damage, 0);
         if (CurrentHealth == 0)
         {
             IsAlive = false;
-            //OnDead?.Invoke();
+            OnDead?.Invoke(this);
         }
-        //OnAction?.Invoke(); 
-    }
-    
-    public void Attack(Team team)
-    {
-        Weapon.Shoot(Helper.GetRandomTarget(team), team);
-        //OnAttack?.Invoke(); 
+        OnHit?.Invoke(damage); 
     }
     
     public void TakeHeal(int healingValue)
     {
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        //OnAction?.Invoke();
+        OnHeal?.Invoke(healingValue);
     }
-
+    
+    private void Attack(Team team)
+    {
+        var target = Helper.GetRandomTarget(team);
+        OnAttack?.Invoke(this, target); 
+        Weapon.Shoot(target, team);
+    }
 }
