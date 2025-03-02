@@ -12,6 +12,9 @@
       <Compile Remove="UNITS\Interfaces\IHaveArmor.cs" />
       <Compile Remove="UNITS\Interfaces\IHaveHealth.cs" />
       <Compile Remove="UNITS\Interfaces\IAttacker.cs" />
+      <Compile Remove="UNITS\UnitWithHealth.cs" />
+      <Compile Remove="EventInfo.cs" />
+      <Compile Remove="UNITS\UnitInfo.cs" />
     </ItemGroup>
 
 </Project>

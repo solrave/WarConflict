@@ -6,8 +6,6 @@ namespace WarConflict.Weapons;
 
 public class Rifle : Weapon
 {
-    public override event Action<int>? InflictDamage;
-    
     public Rifle()
     {
         Name = "Rifle";
@@ -16,7 +14,6 @@ public class Rifle : Weapon
 
     public override void Shoot(IHittable target, Team team)
     {
-       InflictDamage?.Invoke(Damage);
        target.TakeHit(Damage);
     }
    

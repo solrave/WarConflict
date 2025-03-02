@@ -13,56 +13,30 @@ public class Team
     
     public bool IsAlive { get; private set; }
     
-    public Team()
+    public Team(string teamName, List<Soldier> squad)
     {
-        _squad = new List<Soldier>();
+        TeamName = teamName;
+        _squad = squad;
         IsAlive = true;
-        CreateTeam();
     }
 
-    private void SetTeamName()
+    public void RemoveDeadUnits()
     {
-        WriteLine("Input team name:");
-        string? name = ReadLine();
-        TeamName = string.IsNullOrEmpty(name) ? "Team" : name;
-    }
-    
-    private void CreateTeam()
-    {
-        SetTeamName();
-        SetUnitCount(()=> new Marine(), "Marine");
-        SetUnitCount(()=> new HeavyMarine(), "HeavyMarine");
-        SetUnitCount(()=> new Medic(), "Medic");
-        SetNumbersAndNames();
-    }
-
-    private void SetNumbersAndNames()
-    {
-        for (int i = 0; i < _squad.Count; i++)
+        foreach (var unit in Squad)
         {
-            _squad[i].Number = i;
-        }
-    }
-    
-    private void SetUnitCount(Func<Soldier> unit, string unitRank)
-    {
-        WriteLine($"Input {unitRank}'s count in {TeamName}'s team:");
-        
-        bool input = int.TryParse(Console.ReadLine(), out int count);
-        
-        if (input && count > 0)
-        {
-            for (int i = 0; i < count; i++)
+            if (unit.IsAlive != true)
             {
-                _squad.Add(unit());
+                _squad.Remove(unit);
             }
         }
-        else WriteLine("Incorrect input!");
     }
     
-    private void CheckIfTeamAlive()
+    public void CheckIfTeamAlive()
     {
-        if (_squad.Count == 0) IsAlive = false;
+        if (_squad.Count == 0)
+        {
+            IsAlive = false;
+        }
     }
     
 }

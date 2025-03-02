@@ -4,19 +4,11 @@ using WarConflict.UNITS.Interfaces;
 namespace WarConflict;
 
 using System.Text;
-
 public class BattleLogger
 {
     /*public string Message { get; private set; }
 
     private StringBuilder _messageBuilder = new StringBuilder();
-    private Soldier Attacker { get; set; }
-    private Soldier SingleTarget { get; set; }
-    private List<Soldier> Targets { get; set; }
-    private string WeaponName { get; set; }
-    
-    private string AbilityName { get; }
-    private int SingleDamage { get; set; }
     
     private int HealingValue { get; set; }
     private List<int> Damage { get; set; }
@@ -134,20 +126,8 @@ public class BattleLogger
                                $"gets {SingleDamage} damage. [*]");
         Message = _messageBuilder.ToString();
     }*/
-
-    public void SubscribeUnits(Team team)
+    public void Log(string message)
     {
-        foreach (var unit in team.Squad)
-        {
-            unit.OnAction += SendMessage;
-        }
-    }
-
-    private void SendMessage(Soldier? sender)
-    {
-        if (sender != null)
-        {
-            Console.WriteLine($"{sender.Rank} from {sender.FractionName} team is taking action!");
-        }
+        Console.WriteLine(message);
     }
 }

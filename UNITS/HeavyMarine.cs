@@ -4,27 +4,25 @@ using WarConflict.WEAPONS;
 
 namespace WarConflict.UNITS;
 
-public class HeavyMarine : Soldier, IHealable
+public class HeavyMarine : Soldier, IHealable, IHittable
 {
+    private readonly BattleLogger _logger;
+
+    private Soldier _chosenTarget;
+    
     private readonly int _armor;
-    public Weapon Weapon { get; }
-    
-    public  int MaxHealth { get; }
-    
+    private Weapon Weapon { get; }
+
+    public int MaxHealth { get; }
+
     public int CurrentHealth { get;  set; }
     
-    public override event Action<int>? OnHit;
-    
-    public override event Action<Soldier>? OnAction;
-    
-    public override event Action<Soldier>? OnDead;
-    
-    public event Action<IHittable, IHittable>? OnAttack;
-    
-    public event Action<int>? OnHeal;
+    public event Action<int>? OnHealing;
 
-    public HeavyMarine()
+    public HeavyMarine(string teamName, BattleLogger logger)
     {
+        _logger = logger;
+        TeamName = teamName;
         Weapon = new Shotgun();
         Rank = "Heavy Marine";
         MaxHealth = 100;
@@ -35,32 +33,36 @@ public class HeavyMarine : Soldier, IHealable
 
     public override void MakeAction(Team team)
     {
-        throw new NotImplementedException();
+        Attack(team);
     }
 
-    public override void TakeHit(int damage)
+    public void TakeHit(int damage)
     {
         CurrentHealth = Math.Max(CurrentHealth - (damage - _armor), 0);
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
             IsAlive = false;
-            OnDead?.Invoke(this);
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
         }
-        OnHit?.Invoke(damage); 
+        
     }
     
     public void Attack(Team team)
     {
-        var target = Helper.GetRandomTarget(team);
-        OnAttack?.Invoke(this, target); 
+        int chosenTargetIndex = Helper.GetRandom().Next(team.Squad.Count - 1);
+        _chosenTarget = team.Squad[chosenTargetIndex];
+        var target = Helper.GetTargetToHit(team, chosenTargetIndex);
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK] [{_chosenTarget.Number}]" +
+                    $"{_chosenTarget.Rank} from {_chosenTarget.TeamName}'s team");
         Weapon.Shoot(target, team);
     }
     
     public void TakeHeal(int healingValue)
     {
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        OnHeal?.Invoke(healingValue);
-    }
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [HEAL] {healingValue}HP");
 
+    }
     
 }

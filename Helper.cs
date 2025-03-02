@@ -12,9 +12,15 @@ public static class Helper
         return Randomizer.Next(value);
     }
 
-    public static Soldier GetRandomTarget(Team team)
+    public static IHittable GetTargetToHit(Team team, int index)
     {
-        return team.Squad[Randomizer.Next(team.Squad.Count - 1)];
+        return team.Squad.OfType<IHittable>()
+            .ElementAt(index);
+    }
+
+    public static IMakeAction GetRandomSoldierForAction(Team team)
+    {
+        return team.Squad[GetRandom().Next(team.Squad.Count - 1)];
     }
 
     public static Random GetRandom()

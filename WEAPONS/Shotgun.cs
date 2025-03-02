@@ -6,9 +6,7 @@ namespace WarConflict.Weapons;
 
 public class Shotgun : Weapon
 {
-    public int SplashDamage { get; set; } = 1;
-    
-    public override event Action<int>? InflictDamage;
+    private int SplashDamage => 1;
 
     public Shotgun()
     {
@@ -18,7 +16,6 @@ public class Shotgun : Weapon
 
     public override void Shoot(IHittable target, Team team)
     {
-        InflictDamage?.Invoke(Damage);
         var targetList = PickTargetsToSplash(target, team);
         target.TakeHit(Damage);
         foreach (var indirectTarget in targetList)
@@ -35,7 +32,7 @@ public class Shotgun : Weapon
             .FirstOrDefault(-1);
         
         if (index == -1) yield break;
-        if (index > 0) yield return team.Squad[index - 1];
-        if (index < team.Squad.Count - 1) yield return team.Squad[index + 1];
+        if (index > 0) yield return team.Squad.OfType<IHittable>().ElementAt(index - 1);
+        if (index < team.Squad.Count - 1) yield return team.Squad.OfType<IHittable>().ElementAt(index + 1);
     }
 }
