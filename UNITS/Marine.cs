@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using WarConflict.UNITS.Interfaces;
 using WarConflict.Weapons;
 using WarConflict.WEAPONS;
@@ -28,6 +29,12 @@ public class Marine : Soldier, IHealable, IHittable
     
     public override void MakeAction(Team friendlyTeam, Team  enemyTeam)
     {
+        if (IsBlind)
+        {
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [BLIND]");
+            IsBlind = false;
+            return;
+        }
         Attack(enemyTeam);
     }
 
@@ -37,7 +44,7 @@ public class Marine : Soldier, IHealable, IHittable
         _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
-            _logger.LogThis($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
             IsAlive = false;
         }
     }

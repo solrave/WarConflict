@@ -131,8 +131,4 @@ public class BattleLogger
         Console.WriteLine(message);
     }
     
-    public void LogThis(string message)
-    {
-        Console.Write($"{message} \n");
-    }
 }

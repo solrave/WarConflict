@@ -7,6 +7,8 @@ public class Medic : Soldier,IHealable, IHealer, IHittable
     private readonly BattleLogger _logger;
     
     private readonly int _armor;
+
+    private readonly int _abilitySuccessful = 5;
     
     public int MaxHealth { get; }
 
@@ -28,13 +30,20 @@ public class Medic : Soldier,IHealable, IHealer, IHittable
 
     public override void MakeAction(Team friendlyTeam, Team enemyTeam)
     {
+        if (IsBlind)
+        {
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [BLIND]");
+            IsBlind = false;
+            return;
+        }
+        TryUseAbility(enemyTeam);
         Heal(friendlyTeam);
     }
 
     public void TakeHit(int damage)
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
-        _logger.LogThis($"{Number}{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        _logger.Log($"{Number}{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
 
         if (CurrentHealth == 0)
@@ -72,6 +81,16 @@ public class Medic : Soldier,IHealable, IHealer, IHittable
             .Where(t => t.CurrentHealth < t.MaxHealth);
         return healableTargets.Count() > 0
             ? healableTargets.ElementAt(Helper.GetRandomValue(healableTargets.Count())) : null;
+    }
+
+    private void TryUseAbility(Team enemyTeam)
+    {
+        if (_abilitySuccessful > Helper.GetRandomValue(12))
+        {
+            var target = Helper.GetRandomSoldier(enemyTeam);
+            target.IsBlind = true;
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
+        }
     }
     
 }

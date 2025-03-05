@@ -11,6 +11,8 @@ public abstract class Soldier : IMakeAction
     public int Number { get; set; }
 
     public bool IsAlive { get; protected set; }
+
+    public bool IsBlind = false;
     
     public abstract void MakeAction(Team friendlyTeam, Team enemTeam);
 

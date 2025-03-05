@@ -20,10 +20,15 @@ public static class Helper
 
     public static IMakeAction GetRandomSoldierForAction(Team team)
     {
-        return team.Squad[GetRandom().Next(team.Squad.Count - 1)];
+        return team.Squad[GetRandom().Next(team.Squad.Count)];
+    }
+    
+    public static Soldier GetRandomSoldier(Team team)
+    {
+        return team.Squad[GetRandom().Next(team.Squad.Count)];
     }
 
-    public static Random GetRandom()
+    private static Random GetRandom()
     {
         return Randomizer;
     }

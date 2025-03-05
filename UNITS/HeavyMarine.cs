@@ -33,6 +33,12 @@ public class HeavyMarine : Soldier, IHealable, IHittable
 
     public override void MakeAction(Team team, Team enemyTeam)
     {
+        if (IsBlind)
+        {
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [BLIND]");
+            IsBlind = false;
+            return;
+        }
         Attack(enemyTeam);
     }
 
@@ -40,7 +46,7 @@ public class HeavyMarine : Soldier, IHealable, IHittable
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
-        _logger.LogThis($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
             _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
