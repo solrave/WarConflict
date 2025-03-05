@@ -21,14 +21,14 @@ public class Marine : Soldier, IHealable, IHittable
         TeamName = teamName;
         Weapon = new Rifle();
         Rank = "Marine";
-        MaxHealth = 100;
+        MaxHealth = 40;
         CurrentHealth = MaxHealth;
         IsAlive = true;
     }
     
-    public override void MakeAction(Team team)
+    public override void MakeAction(Team friendlyTeam, Team  enemyTeam)
     {
-        Attack(team);
+        Attack(enemyTeam);
     }
 
     public void TakeHit(int damage)
@@ -37,24 +37,21 @@ public class Marine : Soldier, IHealable, IHittable
         _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
+            _logger.LogThis($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
             IsAlive = false;
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
         }
     }
     
     public void TakeHeal(int healingValue)
     {
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [HEAL] {healingValue}HP");
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
     }
     
-    private void Attack(Team team)
+    private void Attack(Team enemyTeam)
     {
-        int chosenTargetIndex = Helper.GetRandom().Next(team.Squad.Count - 1);
-        _chosenTarget = team.Squad[chosenTargetIndex];
-        var target = Helper.GetTargetToHit(team, chosenTargetIndex);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK] [{_chosenTarget.Number}]" +
-                    $"{_chosenTarget.Rank} from {_chosenTarget.TeamName}'s team");
-        Weapon.Shoot(target, team);
+        var target = Helper.GetTargetToHit(enemyTeam, Helper.GetRandomValue(enemyTeam.Squad.Count));
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK]");
+        Weapon.Shoot(target, enemyTeam);
     }
 }

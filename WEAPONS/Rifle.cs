@@ -9,7 +9,7 @@ public class Rifle : Weapon
     public Rifle()
     {
         Name = "Rifle";
-        Damage = 5;
+        Damage = 6;
     }
 
     public override void Shoot(IHittable target, Team team)

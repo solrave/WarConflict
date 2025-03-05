@@ -25,44 +25,40 @@ public class HeavyMarine : Soldier, IHealable, IHittable
         TeamName = teamName;
         Weapon = new Shotgun();
         Rank = "Heavy Marine";
-        MaxHealth = 100;
+        MaxHealth = 50;
         CurrentHealth = MaxHealth;
-        _armor = 50;
+        _armor = 1;
         IsAlive = true;
     }
 
-    public override void MakeAction(Team team)
+    public override void MakeAction(Team team, Team enemyTeam)
     {
-        Attack(team);
+        Attack(enemyTeam);
     }
 
     public void TakeHit(int damage)
     {
-        CurrentHealth = Math.Max(CurrentHealth - (damage - _armor), 0);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
+        CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
+        _logger.LogThis($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
-            IsAlive = false;
             _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
+            IsAlive = false;
         }
-        
     }
     
-    public void Attack(Team team)
+    public void Attack(Team enemyTeam)
     {
-        int chosenTargetIndex = Helper.GetRandom().Next(team.Squad.Count - 1);
-        _chosenTarget = team.Squad[chosenTargetIndex];
-        var target = Helper.GetTargetToHit(team, chosenTargetIndex);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK] [{_chosenTarget.Number}]" +
-                    $"{_chosenTarget.Rank} from {_chosenTarget.TeamName}'s team");
-        Weapon.Shoot(target, team);
+        var target = Helper.GetTargetToHit(enemyTeam, Helper.GetRandomValue(enemyTeam.Squad.Count));
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK]");
+        Weapon.Shoot(target, enemyTeam);
     }
     
     public void TakeHeal(int healingValue)
     {
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [HEAL] {healingValue}HP");
-
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
     }
     
 }

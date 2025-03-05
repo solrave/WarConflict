@@ -8,7 +8,7 @@ public class BattleController
     private readonly BattleLogger _logger;
     private readonly Team _blueTeam;
     private readonly Team _redTeam;
-
+    
     public BattleController(Team blueTeam, Team redTeam, BattleLogger logger)
     {
         _blueTeam = blueTeam;
@@ -22,25 +22,18 @@ public class BattleController
         {
             TriggerAction(_blueTeam, _redTeam);
             _redTeam.RemoveDeadUnits();
-            _redTeam.CheckIfTeamAlive();
+            if (!_redTeam.IsAlive) break;
             TriggerAction(_redTeam, _blueTeam);
             _blueTeam.RemoveDeadUnits();
-            _blueTeam.CheckIfTeamAlive();
+            if (!_blueTeam.IsAlive) break;
         }
         FinishFight();
     }
 
-    private void TriggerAction(Team actionTeam, Team targetTeam)
+    private void TriggerAction(Team friendlyTeam, Team enemyTeam)
     {
-        var actionUnit = Helper.GetRandomSoldierForAction(actionTeam);
-        if (actionUnit is IHealer healer)
-        {
-            healer.Heal(actionTeam);
-        }
-        else
-        {
-            actionUnit.MakeAction(targetTeam);
-        }
+        var actionUnit = Helper.GetRandomSoldierForAction(friendlyTeam);
+        actionUnit.MakeAction(friendlyTeam, enemyTeam);
     }
     
     private void FinishFight()
@@ -66,5 +59,4 @@ public class BattleController
             Environment.Exit(0);
         }
     }
-
 }

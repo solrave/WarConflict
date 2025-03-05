@@ -1,11 +1,12 @@
 using WarConflict.UNITS;
+using WarConflict.UNITS.Interfaces;
 using static System.Console;
 
 namespace WarConflict;
 
 public class Team
 {
-    private readonly List<Soldier> _squad;
+    private List<Soldier> _squad;
 
     public IReadOnlyList<Soldier> Squad => _squad;
     
@@ -22,16 +23,11 @@ public class Team
 
     public void RemoveDeadUnits()
     {
-        foreach (var unit in Squad)
-        {
-            if (unit.IsAlive != true)
-            {
-                _squad.Remove(unit);
-            }
-        }
+        _squad.RemoveAll(soldier => !soldier.IsAlive);
+        CheckIfTeamAlive();
     }
     
-    public void CheckIfTeamAlive()
+    private void CheckIfTeamAlive()
     {
         if (_squad.Count == 0)
         {

@@ -4,7 +4,7 @@ namespace WarConflict.UNITS;
 
 public abstract class Soldier : IMakeAction
 {
-    public string? TeamName { get; init; }
+    public string? TeamName { get; protected init; }
 
     public string? Rank { get; protected init; }
     
@@ -12,6 +12,6 @@ public abstract class Soldier : IMakeAction
 
     public bool IsAlive { get; protected set; }
     
-    public abstract void MakeAction(Team team);
+    public abstract void MakeAction(Team friendlyTeam, Team enemTeam);
 
 }

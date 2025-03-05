@@ -6,12 +6,12 @@ namespace WarConflict.Weapons;
 
 public class Shotgun : Weapon
 {
-    private int SplashDamage => 1;
+    private int SplashDamage => 8;
 
     public Shotgun()
     {
         Name = "Shotgun";
-        Damage = 3;
+        Damage = 16;
     }
 
     public override void Shoot(IHittable target, Team team)
@@ -20,7 +20,7 @@ public class Shotgun : Weapon
         target.TakeHit(Damage);
         foreach (var indirectTarget in targetList)
         {
-            indirectTarget.TakeHit(SplashDamage);
+            indirectTarget.TakeHit(Helper.GetRandomValue(SplashDamage));
         }
     }
     

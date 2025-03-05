@@ -48,7 +48,7 @@ void CreateUnits(List<Soldier> unitList, Func<Soldier> unit, string unitRank)
         
     bool input = int.TryParse(ReadLine(), out int count);
         
-    if (input && count > 0)
+    if (input && count >= 0)
     {
         for (int i = 0; i < count; i++)
         {
