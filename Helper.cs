@@ -28,7 +28,7 @@ public static class Helper
         return team.Squad[GetRandom().Next(team.Squad.Count)];
     }
 
-    private static Random GetRandom()
+    public static Random GetRandom()
     {
         return Randomizer;
     }

@@ -24,6 +24,7 @@ Team CreateTeam()
     SetTeamName();
     AddUnitsToList(unitList);
     SetUnitNumbers(unitList);
+    ShuffleUnits(unitList);
     return new Team(teamName, unitList);
 }
 
@@ -56,4 +57,13 @@ void CreateUnits(List<Soldier> unitList, Func<Soldier> unit, string unitRank)
         }
     }
     else WriteLine("Incorrect input!");
+}
+
+void ShuffleUnits(List<Soldier> squad)
+{
+    for (int i = squad.Count() - 1; i > 0; i--)
+    {
+        int j = Helper.GetRandom().Next(i + 1);
+        (squad[i], squad[j]) = (squad[j], squad[i]);
+    }
 }

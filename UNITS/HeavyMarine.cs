@@ -7,17 +7,20 @@ namespace WarConflict.UNITS;
 public class HeavyMarine : Soldier, IHealable, IHittable
 {
     private readonly BattleLogger _logger;
-
-    private Soldier _chosenTarget;
     
-    private readonly int _armor;
+    private int _armor;
+
+    private readonly int _abilitySuccess = 9;
+    
+    private readonly int _abilityChanceRange = 15;
+
+    private bool _abilityIsUsed;
+    
     private Weapon Weapon { get; }
 
     public int MaxHealth { get; }
 
     public int CurrentHealth { get;  set; }
-    
-    public event Action<int>? OnHealing;
 
     public HeavyMarine(string teamName, BattleLogger logger)
     {
@@ -39,6 +42,10 @@ public class HeavyMarine : Soldier, IHealable, IHittable
             IsBlind = false;
             return;
         }
+        if (!_abilityIsUsed)
+        {
+            TryUseAbility();
+        }
         Attack(enemyTeam);
     }
 
@@ -46,15 +53,21 @@ public class HeavyMarine : Soldier, IHealable, IHittable
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        if (_abilityIsUsed)
+        {
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team has [SUPER_ARMOR]");
+            _abilityIsUsed = false;
+            _armor = 1;
+        }
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
             _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
             IsAlive = false;
         }
     }
-    
-    public void Attack(Team enemyTeam)
+
+    private void Attack(Team enemyTeam)
     {
         var target = Helper.GetTargetToHit(enemyTeam, Helper.GetRandomValue(enemyTeam.Squad.Count));
         _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK]");
@@ -67,4 +80,13 @@ public class HeavyMarine : Soldier, IHealable, IHittable
         _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
     }
     
+    private void TryUseAbility()
+    {
+        if (_abilitySuccess > Helper.GetRandomValue(_abilityChanceRange))
+        {
+            _armor = 12;
+            _abilityIsUsed = true;
+            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
+        }
+    }
 }

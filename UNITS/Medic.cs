@@ -2,13 +2,15 @@ using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict.UNITS;
 
-public class Medic : Soldier,IHealable, IHealer, IHittable
+public class Medic : Soldier,IHealable, IHittable
 {
     private readonly BattleLogger _logger;
     
     private readonly int _armor;
 
-    private readonly int _abilitySuccessful = 5;
+    private readonly int _abilitySuccess = 5;
+    
+    private readonly int _abilityChanceRange = 12;
     
     public int MaxHealth { get; }
 
@@ -43,7 +45,7 @@ public class Medic : Soldier,IHealable, IHealer, IHittable
     public void TakeHit(int damage)
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
-        _logger.Log($"{Number}{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
 
         if (CurrentHealth == 0)
@@ -85,9 +87,13 @@ public class Medic : Soldier,IHealable, IHealer, IHittable
 
     private void TryUseAbility(Team enemyTeam)
     {
-        if (_abilitySuccessful > Helper.GetRandomValue(12))
+        if (_abilitySuccess > Helper.GetRandomValue(_abilityChanceRange))
         {
             var target = Helper.GetRandomSoldier(enemyTeam);
+            if (target.IsBlind)
+            {
+                return;
+            }
             target.IsBlind = true;
             _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
         }
