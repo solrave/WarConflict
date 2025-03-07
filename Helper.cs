@@ -2,7 +2,6 @@ using WarConflict.UNITS;
 using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict;
-using static Console;
 
 public static class Helper
 {
@@ -31,5 +30,11 @@ public static class Helper
     public static Random GetRandom()
     {
         return Randomizer;
+    }
+
+    public static void DelayAndExit()
+    {
+        Thread.Sleep(500);
+        Environment.Exit(0);
     }
 }

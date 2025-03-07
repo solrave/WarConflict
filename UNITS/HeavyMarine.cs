@@ -82,11 +82,9 @@ public class HeavyMarine : Soldier, IHealable, IHittable
     
     private void TryUseAbility()
     {
-        if (_abilitySuccess > Helper.GetRandomValue(_abilityChanceRange))
-        {
-            _armor = 12;
-            _abilityIsUsed = true;
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
-        }
+        if (_abilitySuccess <= Helper.GetRandomValue(_abilityChanceRange)) return;
+        _armor = 12;
+        _abilityIsUsed = true;
+        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
     }
 }

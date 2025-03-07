@@ -9,12 +9,11 @@ public class Marine : Soldier, IHealable, IHittable
 {
     private readonly BattleLogger _logger;
     
-    private Soldier _chosenTarget;
     private Weapon Weapon { get; }
 
     public int MaxHealth { get; }
 
-    public int CurrentHealth { get; set; }
+    public int CurrentHealth { get; private set; }
 
     public Marine(string teamName, BattleLogger logger)
     {

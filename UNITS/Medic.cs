@@ -4,19 +4,20 @@ namespace WarConflict.UNITS;
 
 public class Medic : Soldier,IHealable, IHittable
 {
+    private readonly int ABILITY_SUCCESS = 5;
+    
+    private const int ABILITY_CHANCE_RANGE = 12;
+    
     private readonly BattleLogger _logger;
     
     private readonly int _armor;
 
-    private readonly int _abilitySuccess = 5;
-    
-    private readonly int _abilityChanceRange = 12;
-    
+
     public int MaxHealth { get; }
-
-    public int CurrentHealth { get; set; }
-
-    public int HealingValue { get; set; }
+    
+    public int CurrentHealth { get; private set; }
+    
+    private int HealingValue { get; }
     
     public Medic(string teamName, BattleLogger logger)
     {
@@ -63,7 +64,7 @@ public class Medic : Soldier,IHealable, IHittable
 
     }
 
-    public void Heal(Team team)
+    private void Heal(Team team)
     {
         var soldierToHeal = GetHealableSoldier(team);
         if (soldierToHeal != null)
@@ -87,7 +88,7 @@ public class Medic : Soldier,IHealable, IHittable
 
     private void TryUseAbility(Team enemyTeam)
     {
-        if (_abilitySuccess > Helper.GetRandomValue(_abilityChanceRange))
+        if (ABILITY_SUCCESS > Helper.GetRandomValue(ABILITY_CHANCE_RANGE))
         {
             var target = Helper.GetRandomSoldier(enemyTeam);
             if (target.IsBlind)

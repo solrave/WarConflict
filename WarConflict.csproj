@@ -17,6 +17,15 @@
       <Compile Remove="UNITS\UnitInfo.cs" />
       <Compile Remove="UNITS\Interfaces\IHealer.cs" />
       <Compile Remove="UNITS\Interfaces\IHaveEyes.cs" />
+      <Compile Remove="ABILITIES\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="ABILITIES\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ABILITIES\**" />
     </ItemGroup>
 
 </Project>

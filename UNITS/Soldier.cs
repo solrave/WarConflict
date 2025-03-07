@@ -4,9 +4,9 @@ namespace WarConflict.UNITS;
 
 public abstract class Soldier : IMakeAction
 {
-    public string? TeamName { get; protected init; }
+    protected string? TeamName { get; init; }
 
-    public string? Rank { get; protected init; }
+    protected string? Rank { get; init; }
     
     public int Number { get; set; }
 

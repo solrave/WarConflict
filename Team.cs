@@ -6,7 +6,7 @@ namespace WarConflict;
 
 public class Team
 {
-    private List<Soldier> _squad;
+    private readonly List<Soldier> _squad;
 
     public IReadOnlyList<Soldier> Squad => _squad;
     

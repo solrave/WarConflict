@@ -10,7 +10,6 @@ var  battleController = new BattleController(blueTeam, redTeam, logger);
 
 battleController.StartFight();
 
-
 void SetTeamName()
 {
     WriteLine("Input team name:");
@@ -46,9 +45,7 @@ void SetUnitNumbers(List<Soldier> unitList)
 void CreateUnits(List<Soldier> unitList, Func<Soldier> unit, string unitRank)
 {
     WriteLine($"Input {unitRank}'s count in {teamName}'s team:");
-        
     bool input = int.TryParse(ReadLine(), out int count);
-        
     if (input && count >= 0)
     {
         for (int i = 0; i < count; i++)
