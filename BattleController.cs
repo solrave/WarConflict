@@ -13,7 +13,7 @@ public class BattleController
         _logger = logger;
     }
 
-    public void StartFight()
+    public void Start()
     {
         while (_blueTeam.IsAlive && _redTeam.IsAlive)
         {
@@ -39,15 +39,14 @@ public class BattleController
         {
             case false when !_redTeam.IsAlive:
                 _logger.Log("DRAW!Everybody is dead.");
-                Helper.DelayAndExit();
                 break;
+            
             case true when !_redTeam.IsAlive:
                 _logger.Log($"{_blueTeam.TeamName} team WINS!");
-                Helper.DelayAndExit();
                 break;
+            
             case false when _redTeam.IsAlive:
                 _logger.Log($"{_redTeam.TeamName} team WINS!");
-                Helper.DelayAndExit();
                 break;
         }
     }

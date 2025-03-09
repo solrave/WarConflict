@@ -8,7 +8,7 @@ public abstract class Soldier : IMakeAction
 
     protected string? Rank { get; init; }
     
-    public int Number { get; set; }
+    public int IdNumber { get; set; }
 
     public bool IsAlive { get; protected set; }
 

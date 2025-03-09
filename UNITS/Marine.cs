@@ -30,7 +30,7 @@ public class Marine : Soldier, IHealable, IHittable
     {
         if (IsBlind)
         {
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [BLIND]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [BLIND]");
             IsBlind = false;
             return;
         }
@@ -40,10 +40,10 @@ public class Marine : Soldier, IHealable, IHittable
     public void TakeHit(int damage)
     {
         CurrentHealth = Math.Max(CurrentHealth - damage, 0);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team gets {damage} [DAMAGE]");
         if (CurrentHealth == 0)
         {
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [DEAD]");
             IsAlive = false;
         }
     }
@@ -51,13 +51,13 @@ public class Marine : Soldier, IHealable, IHittable
     public void TakeHeal(int healingValue)
     {
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
     }
     
     private void Attack(Team enemyTeam)
     {
         var target = Helper.GetTargetToHit(enemyTeam, Helper.GetRandomValue(enemyTeam.Squad.Count));
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [ATTACK]");
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [ATTACK]");
         Weapon.Shoot(target, enemyTeam);
     }
 }

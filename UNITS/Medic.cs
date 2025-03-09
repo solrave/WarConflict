@@ -35,7 +35,7 @@ public class Medic : Soldier,IHealable, IHittable
     {
         if (IsBlind)
         {
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [BLIND]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [BLIND]");
             IsBlind = false;
             return;
         }
@@ -46,20 +46,20 @@ public class Medic : Soldier,IHealable, IHittable
     public void TakeHit(int damage)
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
 
         if (CurrentHealth == 0)
         {
             IsAlive = false;
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [DEAD]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [DEAD]");
         }
         
     }
     
     public void TakeHeal(int healingValue)
     {
-        _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
         CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
 
     }
@@ -69,7 +69,7 @@ public class Medic : Soldier,IHealable, IHittable
         var soldierToHeal = GetHealableSoldier(team);
         if (soldierToHeal != null)
         {
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team [HEALS]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [HEALS]");
             soldierToHeal.TakeHeal(HealingValue);
         }
         else
@@ -82,7 +82,7 @@ public class Medic : Soldier,IHealable, IHittable
     {
         var healableTargets = team.Squad.OfType<IHealable>()
             .Where(t => t.CurrentHealth < t.MaxHealth);
-        return healableTargets.Count() > 0
+        return healableTargets.Any()
             ? healableTargets.ElementAt(Helper.GetRandomValue(healableTargets.Count())) : null;
     }
 
@@ -90,13 +90,13 @@ public class Medic : Soldier,IHealable, IHittable
     {
         if (ABILITY_SUCCESS > Helper.GetRandomValue(ABILITY_CHANCE_RANGE))
         {
-            var target = Helper.GetRandomSoldier(enemyTeam);
+            var target = Helper.GetRandomSoldier(enemyTeam.Squad);
             if (target.IsBlind)
             {
                 return;
             }
             target.IsBlind = true;
-            _logger.Log($"[{Number}]{Rank} from {TeamName}'s team is [USING ABILITY]");
+            _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [USING ABILITY]");
         }
     }
     

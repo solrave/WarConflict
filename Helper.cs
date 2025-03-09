@@ -1,4 +1,3 @@
-using WarConflict.UNITS;
 using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict;
@@ -19,22 +18,11 @@ public static class Helper
 
     public static IMakeAction GetRandomSoldierForAction(Team team)
     {
-        return team.Squad[GetRandom().Next(team.Squad.Count)];
-    }
-    
-    public static Soldier GetRandomSoldier(Team team)
-    {
-        return team.Squad[GetRandom().Next(team.Squad.Count)];
+        return team.Squad[Randomizer.Next(team.Squad.Count)];
     }
 
-    public static Random GetRandom()
+    public static T GetRandomSoldier<T>(IReadOnlyList<T> squad)
     {
-        return Randomizer;
-    }
-
-    public static void DelayAndExit()
-    {
-        Thread.Sleep(500);
-        Environment.Exit(0);
+        return squad[Randomizer.Next(squad.Count)];
     }
 }
