@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 using WarConflict.UNITS.Interfaces;
 using WarConflict.Weapons;
 using WarConflict.WEAPONS;
@@ -8,12 +7,6 @@ namespace WarConflict.UNITS;
 public class Marine : Soldier, IHealable
 {
     private readonly BattleLogger _logger;
-    
-    private Weapon Weapon { get; }
-
-    public int MaxHealth { get; }
-
-    public int CurrentHealth { get; private set; }
 
     public Marine(string teamName, BattleLogger logger)
     {
@@ -25,8 +18,20 @@ public class Marine : Soldier, IHealable
         CurrentHealth = MaxHealth;
         IsAlive = true;
     }
-    
-    public override void MakeAction(Team friendlyTeam, Team  enemyTeam)
+
+    private Weapon Weapon { get; }
+
+    public int MaxHealth { get; }
+
+    public int CurrentHealth { get; private set; }
+
+    public void TakeHeal(int healingValue)
+    {
+        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
+    }
+
+    public override void MakeAction(Team friendlyTeam, Team enemyTeam)
     {
         if (IsBlind)
         {
@@ -34,6 +39,7 @@ public class Marine : Soldier, IHealable
             IsBlind = false;
             return;
         }
+
         Attack(enemyTeam);
     }
 
@@ -47,13 +53,7 @@ public class Marine : Soldier, IHealable
             IsAlive = false;
         }
     }
-    
-    public void TakeHeal(int healingValue)
-    {
-        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
-    }
-    
+
     private void Attack(Team enemyTeam)
     {
         var target = Helper.GetRandomSoldier(enemyTeam.HitSquad);

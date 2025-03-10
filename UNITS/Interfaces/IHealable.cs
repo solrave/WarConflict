@@ -6,5 +6,4 @@ public interface IHealable
 
     public int CurrentHealth { get; }
     public void TakeHeal(int healingValue);
-    
 }

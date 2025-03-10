@@ -2,23 +2,15 @@ using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict.UNITS;
 
-public class Medic : Soldier,IHealable
+public class Medic : Soldier, IHealable
 {
-    private readonly int ABILITY_SUCCESS = 5;
-    
     private const int ABILITY_CHANCE_RANGE = 12;
-    
-    private readonly BattleLogger _logger;
-    
+
     private readonly int _armor;
 
+    private readonly BattleLogger _logger;
+    private readonly int ABILITY_SUCCESS = 5;
 
-    public int MaxHealth { get; }
-    
-    public int CurrentHealth { get; private set; }
-    
-    private int HealingValue { get; }
-    
     public Medic(string teamName, BattleLogger logger)
     {
         _logger = logger;
@@ -31,6 +23,19 @@ public class Medic : Soldier,IHealable
         IsAlive = true;
     }
 
+    private int HealingValue { get; }
+
+
+    public int MaxHealth { get; }
+
+    public int CurrentHealth { get; private set; }
+
+    public void TakeHeal(int healingValue)
+    {
+        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
+        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
+    }
+
     public override void MakeAction(Team friendlyTeam, Team enemyTeam)
     {
         if (IsBlind)
@@ -39,13 +44,14 @@ public class Medic : Soldier,IHealable
             IsBlind = false;
             return;
         }
+
         TryUseAbility(enemyTeam);
         Heal(friendlyTeam);
     }
 
     public override void TakeHit(int damage)
     {
-        int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
+        var actualDamage = damage - _armor > 0 ? damage - _armor : 0;
         _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
 
@@ -54,14 +60,6 @@ public class Medic : Soldier,IHealable
             IsAlive = false;
             _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [DEAD]");
         }
-        
-    }
-    
-    public void TakeHeal(int healingValue)
-    {
-        _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [RESTORES] {healingValue}HP");
-        CurrentHealth = Math.Min(CurrentHealth + healingValue, MaxHealth);
-
     }
 
     private void Heal(Team team)
@@ -83,7 +81,8 @@ public class Medic : Soldier,IHealable
         var healableTargets = team.Squad.OfType<IHealable>()
             .Where(t => t.CurrentHealth < t.MaxHealth);
         return healableTargets.Any()
-            ? healableTargets.ElementAt(Helper.GetRandomValue(healableTargets.Count())) : null;
+            ? healableTargets.ElementAt(Helper.GetRandomValue(healableTargets.Count()))
+            : null;
     }
 
     private void TryUseAbility(Team enemyTeam)
@@ -91,13 +90,9 @@ public class Medic : Soldier,IHealable
         if (ABILITY_SUCCESS > Helper.GetRandomValue(ABILITY_CHANCE_RANGE))
         {
             var target = Helper.GetRandomSoldier(enemyTeam.Squad);
-            if (target.IsBlind)
-            {
-                return;
-            }
+            if (target.IsBlind) return;
             target.IsBlind = true;
             _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team is [USING ABILITY]");
         }
     }
-    
 }

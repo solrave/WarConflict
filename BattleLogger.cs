@@ -6,5 +6,4 @@ public class BattleLogger
     {
         Console.WriteLine(message);
     }
-    
 }

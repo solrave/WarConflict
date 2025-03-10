@@ -13,7 +13,6 @@ public class Rifle : Weapon
 
     public override void Shoot(IHittable target, Team team)
     {
-       target.TakeHit(Damage);
+        target.TakeHit(Damage);
     }
-   
 }
