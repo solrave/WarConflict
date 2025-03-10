@@ -2,7 +2,7 @@ using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict.UNITS;
 
-public class Medic : Soldier,IHealable, IHittable
+public class Medic : Soldier,IHealable
 {
     private readonly int ABILITY_SUCCESS = 5;
     
@@ -43,7 +43,7 @@ public class Medic : Soldier,IHealable, IHittable
         Heal(friendlyTeam);
     }
 
-    public void TakeHit(int damage)
+    public override void TakeHit(int damage)
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
         _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team gets {actualDamage} [DAMAGE]");

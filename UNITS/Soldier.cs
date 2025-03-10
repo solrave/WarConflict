@@ -2,7 +2,7 @@ using WarConflict.UNITS.Interfaces;
 
 namespace WarConflict.UNITS;
 
-public abstract class Soldier : IMakeAction
+public abstract class Soldier : IMakeAction, IHittable
 {
     protected string? TeamName { get; init; }
 
@@ -16,4 +16,5 @@ public abstract class Soldier : IMakeAction
     
     public abstract void MakeAction(Team friendlyTeam, Team enemTeam);
 
+    public abstract void TakeHit(int damageValue);
 }

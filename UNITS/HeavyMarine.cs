@@ -4,7 +4,7 @@ using WarConflict.WEAPONS;
 
 namespace WarConflict.UNITS;
 
-public class HeavyMarine : Soldier, IHealable, IHittable
+public class HeavyMarine : Soldier, IHealable
 {
     private readonly BattleLogger _logger;
     
@@ -49,7 +49,7 @@ public class HeavyMarine : Soldier, IHealable, IHittable
         Attack(enemyTeam);
     }
 
-    public void TakeHit(int damage)
+    public override void TakeHit(int damage)
     {
         int actualDamage = damage - _armor > 0 ? damage - _armor : 0;
         CurrentHealth = Math.Max(CurrentHealth - actualDamage, 0);
@@ -75,7 +75,7 @@ public class HeavyMarine : Soldier, IHealable, IHittable
     
     private void Attack(Team enemyTeam)
     {
-        var target = Helper.GetTargetToHit(enemyTeam, Helper.GetRandomValue(enemyTeam.Squad.Count));
+        var target = Helper.GetRandomSoldier(enemyTeam.HitSquad);
         _logger.Log($"[{IdNumber}]{Rank} from {TeamName}'s team [ATTACK]");
         Weapon.Shoot(target, enemyTeam);
     }

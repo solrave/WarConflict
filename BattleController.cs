@@ -1,3 +1,5 @@
+using WarConflict.UNITS.Interfaces;
+
 namespace WarConflict;
 
 public class BattleController
@@ -29,7 +31,7 @@ public class BattleController
 
     private void TriggerAction(Team friendlyTeam, Team enemyTeam)
     {
-        var actionUnit = Helper.GetRandomSoldierForAction(friendlyTeam);
+        var actionUnit = Helper.GetRandomSoldier(friendlyTeam.ActionSquad);
         actionUnit.MakeAction(friendlyTeam, enemyTeam);
     }
     

@@ -9,6 +9,10 @@ public class Team
     private readonly List<Soldier> _squad;
 
     public IReadOnlyList<Soldier> Squad => _squad;
+
+    public IReadOnlyList<IMakeAction> ActionSquad => _squad;
+
+    public IReadOnlyList<IHittable> HitSquad => _squad;
     
     public string? TeamName { get; private set; }
     
